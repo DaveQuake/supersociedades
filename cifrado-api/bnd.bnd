@@ -1,0 +1,9 @@
+Bundle-Name: cifrado-api
+Bundle-SymbolicName: com.co.cifrado.superIntendencia.api
+Bundle-Version: 1.0.0
+
+
+Export-Package:\
+    com.co.cifrado.superIntendencia.api\
+	com.co.cifrado.superIntendencia.exception,\
+	*;resolution:=optional

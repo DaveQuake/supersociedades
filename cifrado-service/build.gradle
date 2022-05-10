@@ -1,0 +1,32 @@
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath group: "gradle.plugin.cz.swsamuraj", name: "gradle-jaxws-plugin", version: "0.6.1"
+	}
+}
+
+apply plugin: "cz.swsamuraj.jaxws"
+
+dependencies {
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
+	compileOnly group: "com.sun.xml.ws", name: "jaxws-ri", version: "2.3.4"
+	
+	compileOnly project(":modules:cifrado-api")
+}
+
+
+jar {
+	manifest.attributes(
+			'Multi-Release': 'false',
+	)
+}
+
+jaxws {
+	wsdlDir = 'src/main/resources/META-INF/wsdl'
+	generatedSources = 'generatedsources/src/main/java'
+}

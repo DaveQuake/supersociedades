@@ -1,4 +1,0 @@
-Bundle-Name: superintendencia-sociedades-sgd-web
-Bundle-SymbolicName: com.co.superintendencia.sociedades.sgd.web
-Bundle-Version: 1.0.0
-Export-Package: com.co.superintendencia.sociedades.sgd.web.constants

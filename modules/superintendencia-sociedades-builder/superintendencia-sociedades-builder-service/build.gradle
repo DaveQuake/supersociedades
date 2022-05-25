@@ -1,0 +1,20 @@
+dependencies {
+	compileOnly group: "com.liferay", name: "com.liferay.petra.io"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.lang"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.aop.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	
+	compileOnly group: "com.liferay.portal", name: "release.portal.api", version: "7.3.1-ga2-3"
+	
+	compileOnly group: "org.osgi", name: "org.osgi.annotation.versioning"
+	compileOnly group: "org.osgi", name: "org.osgi.core"
+	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
+	compileOnly project(":modules:superintendencia-sociedades-builder:superintendencia-sociedades-builder-api")
+}
+
+buildService {
+	apiDir = "../superintendencia-sociedades-builder-api/src/main/java"
+}
+
+group = "com.co.superintendencia.sociedades.builder"

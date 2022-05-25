@@ -1,0 +1,144 @@
+.superintendencia-sociedades-sgd-web-publico {
+}
+
+.modal{
+    display: none;
+    margin: 0;
+    overflow: hidden;
+    position: fixed;
+}
+
+.modal-content {
+    height: 350.55px;
+    width: 560px;
+    left: 403px;
+    top: 8.5px;
+    z-index: 1201;
+}
+
+.rowhidden{
+	display:none;
+}
+
+.rowcenter{
+	text-align: center;
+}
+
+
+.modal-content {
+    height: 500px;
+    width: 700px;
+    left: 250px;
+    top: 8.5px;
+    z-index: 1201;
+}
+
+.mensajeElim{
+	text-align: center;
+}
+
+.btn-block {
+    width: 60% !important;
+    margin-left: 50px;
+}
+
+.fuente-title{
+    font-family: monserrat;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+
+.table-stile{
+    font-family: work Sans;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.dataTables_wrapper {
+    font-family: work Sans;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+
+
+@media only screen and (max-width: 600px) {  
+	.modal-content {
+	    height: 460.55px;
+	    width: 502px;
+	    left: 80px;
+	    top: 120.5px;
+	}
+	
+	
+	.modal-backdrop {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    z-index: 1040;
+	    width: 271vw !important;
+	    height: 271vh !important;
+	    background-color: #393A4A;
+	}
+}
+
+
+@media only screen and (min-width: 600px) {
+
+	.modal-content {
+	    height: 400.55px;
+	    width: 500px;
+	    left: 140px;
+	    top: 44.5px;
+	    z-index: 1201;
+	}
+	
+	.modal-backdrop {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    z-index: 1040;
+	    width: 151vw;
+	    height: 150vh;
+	    background-color: #393A4A;
+	}
+
+}
+
+
+@media only screen and (min-width: 768px) {
+
+	.modal-content {
+	    height: 400.55px;
+	    width: 570px;
+	    left: 180px;
+	    top: 30.5px;
+	    z-index: 1201;
+	}
+
+}
+
+
+@media only screen and (min-width: 992px) {
+	.modal-content {
+	    height: 400.55px;
+	    width: 530px;
+	    left: 250px;
+	    top: 20.5px;
+	    z-index: 1201;
+	}
+} 
+
+
+@media only screen and (min-width: 1200px) {
+	  .modal-content {
+	    height: 350.55px;
+	    width: 560px;
+	    left: 403px;
+	    top: 8.5px;
+	    z-index: 1201;
+	}
+}
+
+

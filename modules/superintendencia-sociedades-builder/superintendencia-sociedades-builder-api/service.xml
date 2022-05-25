@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.3.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_3_0.dtd">
+
+<service-builder dependency-injector="ds" package-path="com.co.superintendencia.sociedades.builder">
+	<namespace>GestionesSGD</namespace>
+	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="false" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
+	<entity local-service="true" name="DocumentoSGD" remote-service="true" uuid="true">
+		<column name="documentoId" primary="true" type="long" />
+		<column name="nombre" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="inicioPublicacion" type="Date" />
+		<column name="finPublicacion" type="Date" />
+		<column name="epigrafe" type="String" />
+		<column name="urlDocumento" type="String" />
+		<column name="urlPagina" type="String" />
+		<column name="categoria" type="String" />
+		<column name="tema" type="String" />
+		<column name="etiqueta" type="String" />
+		<column name="palabraClave" type="String" />
+
+	</entity>
+</service-builder>

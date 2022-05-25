@@ -1,0 +1,10 @@
+Bundle-Name: superintendencia-sociedades-builder-api
+Bundle-SymbolicName: com.co.superintendencia.sociedades.builder.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.co.superintendencia.sociedades.builder.exception,\
+	com.co.superintendencia.sociedades.builder.model,\
+	com.co.superintendencia.sociedades.builder.service,\
+	com.co.superintendencia.sociedades.builder.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../superintendencia-sociedades-builder-service/service.xml

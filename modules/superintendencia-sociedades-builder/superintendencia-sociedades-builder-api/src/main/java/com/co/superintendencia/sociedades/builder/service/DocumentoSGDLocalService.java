@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -193,6 +194,11 @@ public interface DocumentoSGDLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DocumentoSGD fetchDocumentoSGD(long documentoId);
+
+	public List<DocumentoSGD> findByUrlPagina(String urlPagina);
+
+	public List<DocumentoSGD> findByUrlPaginaAndDate(
+		String urlPagina, Date fechaActual);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();

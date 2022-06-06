@@ -16,7 +16,6 @@ package com.co.superintendencia.sociedades.builder.service.base;
 
 import com.co.superintendencia.sociedades.builder.model.DocumentoSGD;
 import com.co.superintendencia.sociedades.builder.service.DocumentoSGDService;
-import com.co.superintendencia.sociedades.builder.service.DocumentoSGDServiceUtil;
 import com.co.superintendencia.sociedades.builder.service.persistence.DocumentoSGDPersistence;
 
 import com.liferay.portal.aop.AopService;
@@ -29,11 +28,8 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.service.BaseServiceImpl;
 import com.liferay.portal.kernel.util.PortalUtil;
 
-import java.lang.reflect.Field;
-
 import javax.sql.DataSource;
 
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -54,13 +50,8 @@ public abstract class DocumentoSGDServiceBaseImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Use <code>DocumentoSGDService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>DocumentoSGDServiceUtil</code>.
+	 * Never modify or reference this class directly. Use <code>DocumentoSGDService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.co.superintendencia.sociedades.builder.service.DocumentoSGDServiceUtil</code>.
 	 */
-	@Deactivate
-	protected void deactivate() {
-		_setServiceUtilService(null);
-	}
-
 	@Override
 	public Class<?>[] getAopInterfaces() {
 		return new Class<?>[] {
@@ -71,8 +62,6 @@ public abstract class DocumentoSGDServiceBaseImpl
 	@Override
 	public void setAopProxy(Object aopProxy) {
 		documentoSGDService = (DocumentoSGDService)aopProxy;
-
-		_setServiceUtilService(documentoSGDService);
 	}
 
 	/**
@@ -114,22 +103,6 @@ public abstract class DocumentoSGDServiceBaseImpl
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
-		}
-	}
-
-	private void _setServiceUtilService(
-		DocumentoSGDService documentoSGDService) {
-
-		try {
-			Field field = DocumentoSGDServiceUtil.class.getDeclaredField(
-				"_service");
-
-			field.setAccessible(true);
-
-			field.set(null, documentoSGDService);
-		}
-		catch (ReflectiveOperationException reflectiveOperationException) {
-			throw new RuntimeException(reflectiveOperationException);
 		}
 	}
 

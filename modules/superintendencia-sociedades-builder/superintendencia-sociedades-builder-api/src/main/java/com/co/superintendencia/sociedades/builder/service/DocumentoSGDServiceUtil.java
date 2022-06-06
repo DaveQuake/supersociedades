@@ -14,6 +14,10 @@
 
 package com.co.superintendencia.sociedades.builder.service;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * Provides the remote service utility for DocumentoSGD. This utility wraps
  * <code>com.co.superintendencia.sociedades.builder.service.impl.DocumentoSGDServiceImpl</code> and is an
@@ -39,14 +43,28 @@ public class DocumentoSGDServiceUtil {
 	 *
 	 * @return the OSGi service identifier
 	 */
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static DocumentoSGDService getService() {
-		return _service;
+		return _serviceTracker.getService();
 	}
 
-	private static volatile DocumentoSGDService _service;
+	private static ServiceTracker<DocumentoSGDService, DocumentoSGDService>
+		_serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DocumentoSGDService.class);
+
+		ServiceTracker<DocumentoSGDService, DocumentoSGDService>
+			serviceTracker =
+				new ServiceTracker<DocumentoSGDService, DocumentoSGDService>(
+					bundle.getBundleContext(), DocumentoSGDService.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 
 }

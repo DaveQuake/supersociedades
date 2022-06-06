@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * The persistence utility for the documento sgd service. This utility wraps <code>com.co.superintendencia.sociedades.builder.service.persistence.impl.DocumentoSGDPersistenceImpl</code> and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
@@ -288,6 +292,178 @@ public class DocumentoSGDUtil {
 	}
 
 	/**
+	 * Returns all the documento sgds where urlPagina = &#63;.
+	 *
+	 * @param urlPagina the url pagina
+	 * @return the matching documento sgds
+	 */
+	public static List<DocumentoSGD> findByUrlPagina(String urlPagina) {
+		return getPersistence().findByUrlPagina(urlPagina);
+	}
+
+	/**
+	 * Returns a range of all the documento sgds where urlPagina = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DocumentoSGDModelImpl</code>.
+	 * </p>
+	 *
+	 * @param urlPagina the url pagina
+	 * @param start the lower bound of the range of documento sgds
+	 * @param end the upper bound of the range of documento sgds (not inclusive)
+	 * @return the range of matching documento sgds
+	 */
+	public static List<DocumentoSGD> findByUrlPagina(
+		String urlPagina, int start, int end) {
+
+		return getPersistence().findByUrlPagina(urlPagina, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the documento sgds where urlPagina = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DocumentoSGDModelImpl</code>.
+	 * </p>
+	 *
+	 * @param urlPagina the url pagina
+	 * @param start the lower bound of the range of documento sgds
+	 * @param end the upper bound of the range of documento sgds (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching documento sgds
+	 */
+	public static List<DocumentoSGD> findByUrlPagina(
+		String urlPagina, int start, int end,
+		OrderByComparator<DocumentoSGD> orderByComparator) {
+
+		return getPersistence().findByUrlPagina(
+			urlPagina, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the documento sgds where urlPagina = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DocumentoSGDModelImpl</code>.
+	 * </p>
+	 *
+	 * @param urlPagina the url pagina
+	 * @param start the lower bound of the range of documento sgds
+	 * @param end the upper bound of the range of documento sgds (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching documento sgds
+	 */
+	public static List<DocumentoSGD> findByUrlPagina(
+		String urlPagina, int start, int end,
+		OrderByComparator<DocumentoSGD> orderByComparator,
+		boolean useFinderCache) {
+
+		return getPersistence().findByUrlPagina(
+			urlPagina, start, end, orderByComparator, useFinderCache);
+	}
+
+	/**
+	 * Returns the first documento sgd in the ordered set where urlPagina = &#63;.
+	 *
+	 * @param urlPagina the url pagina
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching documento sgd
+	 * @throws NoSuchDocumentoSGDException if a matching documento sgd could not be found
+	 */
+	public static DocumentoSGD findByUrlPagina_First(
+			String urlPagina, OrderByComparator<DocumentoSGD> orderByComparator)
+		throws com.co.superintendencia.sociedades.builder.exception.
+			NoSuchDocumentoSGDException {
+
+		return getPersistence().findByUrlPagina_First(
+			urlPagina, orderByComparator);
+	}
+
+	/**
+	 * Returns the first documento sgd in the ordered set where urlPagina = &#63;.
+	 *
+	 * @param urlPagina the url pagina
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching documento sgd, or <code>null</code> if a matching documento sgd could not be found
+	 */
+	public static DocumentoSGD fetchByUrlPagina_First(
+		String urlPagina, OrderByComparator<DocumentoSGD> orderByComparator) {
+
+		return getPersistence().fetchByUrlPagina_First(
+			urlPagina, orderByComparator);
+	}
+
+	/**
+	 * Returns the last documento sgd in the ordered set where urlPagina = &#63;.
+	 *
+	 * @param urlPagina the url pagina
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching documento sgd
+	 * @throws NoSuchDocumentoSGDException if a matching documento sgd could not be found
+	 */
+	public static DocumentoSGD findByUrlPagina_Last(
+			String urlPagina, OrderByComparator<DocumentoSGD> orderByComparator)
+		throws com.co.superintendencia.sociedades.builder.exception.
+			NoSuchDocumentoSGDException {
+
+		return getPersistence().findByUrlPagina_Last(
+			urlPagina, orderByComparator);
+	}
+
+	/**
+	 * Returns the last documento sgd in the ordered set where urlPagina = &#63;.
+	 *
+	 * @param urlPagina the url pagina
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching documento sgd, or <code>null</code> if a matching documento sgd could not be found
+	 */
+	public static DocumentoSGD fetchByUrlPagina_Last(
+		String urlPagina, OrderByComparator<DocumentoSGD> orderByComparator) {
+
+		return getPersistence().fetchByUrlPagina_Last(
+			urlPagina, orderByComparator);
+	}
+
+	/**
+	 * Returns the documento sgds before and after the current documento sgd in the ordered set where urlPagina = &#63;.
+	 *
+	 * @param documentoId the primary key of the current documento sgd
+	 * @param urlPagina the url pagina
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next documento sgd
+	 * @throws NoSuchDocumentoSGDException if a documento sgd with the primary key could not be found
+	 */
+	public static DocumentoSGD[] findByUrlPagina_PrevAndNext(
+			long documentoId, String urlPagina,
+			OrderByComparator<DocumentoSGD> orderByComparator)
+		throws com.co.superintendencia.sociedades.builder.exception.
+			NoSuchDocumentoSGDException {
+
+		return getPersistence().findByUrlPagina_PrevAndNext(
+			documentoId, urlPagina, orderByComparator);
+	}
+
+	/**
+	 * Removes all the documento sgds where urlPagina = &#63; from the database.
+	 *
+	 * @param urlPagina the url pagina
+	 */
+	public static void removeByUrlPagina(String urlPagina) {
+		getPersistence().removeByUrlPagina(urlPagina);
+	}
+
+	/**
+	 * Returns the number of documento sgds where urlPagina = &#63;.
+	 *
+	 * @param urlPagina the url pagina
+	 * @return the number of matching documento sgds
+	 */
+	public static int countByUrlPagina(String urlPagina) {
+		return getPersistence().countByUrlPagina(urlPagina);
+	}
+
+	/**
 	 * Caches the documento sgd in the entity cache if it is enabled.
 	 *
 	 * @param documentoSGD the documento sgd
@@ -437,9 +613,25 @@ public class DocumentoSGDUtil {
 	}
 
 	public static DocumentoSGDPersistence getPersistence() {
-		return _persistence;
+		return _serviceTracker.getService();
 	}
 
-	private static volatile DocumentoSGDPersistence _persistence;
+	private static ServiceTracker
+		<DocumentoSGDPersistence, DocumentoSGDPersistence> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DocumentoSGDPersistence.class);
+
+		ServiceTracker<DocumentoSGDPersistence, DocumentoSGDPersistence>
+			serviceTracker =
+				new ServiceTracker
+					<DocumentoSGDPersistence, DocumentoSGDPersistence>(
+						bundle.getBundleContext(),
+						DocumentoSGDPersistence.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 
 }

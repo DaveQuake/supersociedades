@@ -16,7 +16,6 @@ package com.co.superintendencia.sociedades.builder.service.base;
 
 import com.co.superintendencia.sociedades.builder.model.DocumentoSGD;
 import com.co.superintendencia.sociedades.builder.service.DocumentoSGDLocalService;
-import com.co.superintendencia.sociedades.builder.service.DocumentoSGDLocalServiceUtil;
 import com.co.superintendencia.sociedades.builder.service.persistence.DocumentoSGDPersistence;
 
 import com.liferay.portal.aop.AopService;
@@ -45,13 +44,10 @@ import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Field;
-
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -72,7 +68,7 @@ public abstract class DocumentoSGDLocalServiceBaseImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Use <code>DocumentoSGDLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>DocumentoSGDLocalServiceUtil</code>.
+	 * Never modify or reference this class directly. Use <code>DocumentoSGDLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.co.superintendencia.sociedades.builder.service.DocumentoSGDLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -365,11 +361,6 @@ public abstract class DocumentoSGDLocalServiceBaseImpl
 		return documentoSGDPersistence.update(documentoSGD);
 	}
 
-	@Deactivate
-	protected void deactivate() {
-		_setLocalServiceUtilService(null);
-	}
-
 	@Override
 	public Class<?>[] getAopInterfaces() {
 		return new Class<?>[] {
@@ -381,8 +372,6 @@ public abstract class DocumentoSGDLocalServiceBaseImpl
 	@Override
 	public void setAopProxy(Object aopProxy) {
 		documentoSGDLocalService = (DocumentoSGDLocalService)aopProxy;
-
-		_setLocalServiceUtilService(documentoSGDLocalService);
 	}
 
 	/**
@@ -424,22 +413,6 @@ public abstract class DocumentoSGDLocalServiceBaseImpl
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
-		}
-	}
-
-	private void _setLocalServiceUtilService(
-		DocumentoSGDLocalService documentoSGDLocalService) {
-
-		try {
-			Field field = DocumentoSGDLocalServiceUtil.class.getDeclaredField(
-				"_service");
-
-			field.setAccessible(true);
-
-			field.set(null, documentoSGDLocalService);
-		}
-		catch (ReflectiveOperationException reflectiveOperationException) {
-			throw new RuntimeException(reflectiveOperationException);
 		}
 	}
 

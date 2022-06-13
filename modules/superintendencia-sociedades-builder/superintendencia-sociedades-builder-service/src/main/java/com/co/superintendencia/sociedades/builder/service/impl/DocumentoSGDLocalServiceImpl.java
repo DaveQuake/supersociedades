@@ -14,9 +14,14 @@
 
 package com.co.superintendencia.sociedades.builder.service.impl;
 
+import com.co.superintendencia.sociedades.builder.model.DocumentoSGD;
 import com.co.superintendencia.sociedades.builder.service.base.DocumentoSGDLocalServiceBaseImpl;
 
 import com.liferay.portal.aop.AopService;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -29,4 +34,19 @@ import org.osgi.service.component.annotations.Component;
 )
 public class DocumentoSGDLocalServiceImpl
 	extends DocumentoSGDLocalServiceBaseImpl {
+	
+	public List<DocumentoSGD> findByUrlPaginaAndDate(String urlPagina, Date fechaActual) {
+		List<DocumentoSGD> documentos = this.documentoSGDPersistence.findByUrlPagina(urlPagina);
+		List<DocumentoSGD> newList = new ArrayList<DocumentoSGD>();
+		for(DocumentoSGD doc : documentos){
+		    if(fechaActual.after(doc.getInicioPublicacion()) && doc.getFinPublicacion().after(fechaActual)) {
+		    	newList.add(doc);
+		    }		    
+		}
+		return newList;
+	}
+	
+	public List<DocumentoSGD> findByUrlPagina(String urlPagina) {
+		return this.documentoSGDPersistence.findByUrlPagina(urlPagina);
+	}
 }

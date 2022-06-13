@@ -3,7 +3,7 @@
 
 <service-builder dependency-injector="ds" package-path="com.co.superintendencia.sociedades.builder">
 	<namespace>GestionesSGD</namespace>
-	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="false" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
+	
 	<entity local-service="true" name="DocumentoSGD" remote-service="true" uuid="true">
 		<column name="documentoId" primary="true" type="long" />
 		<column name="nombre" type="String" />
@@ -18,5 +18,8 @@
 		<column name="etiqueta" type="String" />
 		<column name="palabraClave" type="String" />
 
+		<finder name="UrlPagina" return-type="Collection">
+			<finder-column name="urlPagina" />
+		</finder>
 	</entity>
 </service-builder>

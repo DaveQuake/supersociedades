@@ -1,0 +1,10 @@
+Bundle-Name: gov-co-supersociedades-sgd-sb-api
+Bundle-SymbolicName: gov.co.supersociedades.sgd.sb.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	gov.co.supersociedades.sgd.sb.exception,\
+	gov.co.supersociedades.sgd.sb.model,\
+	gov.co.supersociedades.sgd.sb.service,\
+	gov.co.supersociedades.sgd.sb.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../gov-co-supersociedades-sgd-sb-service/service.xml

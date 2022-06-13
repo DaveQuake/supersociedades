@@ -14,16 +14,9 @@
 
 package com.co.superintendencia.sociedades.builder.service;
 
-import com.co.superintendencia.sociedades.builder.model.DocumentoSGD;
-
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.PersistedModel;
-import com.liferay.portal.kernel.util.OrderByComparator;
-
-import java.io.Serializable;
-
-import java.util.List;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Provides the local service utility for DocumentoSGD. This utility wraps
@@ -55,7 +48,11 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param documentoSGD the documento sgd
 	 * @return the documento sgd that was added
 	 */
-	public static DocumentoSGD addDocumentoSGD(DocumentoSGD documentoSGD) {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+		addDocumentoSGD(
+			com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+				documentoSGD) {
+
 		return getService().addDocumentoSGD(documentoSGD);
 	}
 
@@ -65,16 +62,18 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param documentoId the primary key for the new documento sgd
 	 * @return the new documento sgd
 	 */
-	public static DocumentoSGD createDocumentoSGD(long documentoId) {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+		createDocumentoSGD(long documentoId) {
+
 		return getService().createDocumentoSGD(documentoId);
 	}
 
 	/**
 	 * @throws PortalException
 	 */
-	public static PersistedModel createPersistedModel(
-			Serializable primaryKeyObj)
-		throws PortalException {
+	public static com.liferay.portal.kernel.model.PersistedModel
+			createPersistedModel(java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().createPersistedModel(primaryKeyObj);
 	}
@@ -89,7 +88,11 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param documentoSGD the documento sgd
 	 * @return the documento sgd that was removed
 	 */
-	public static DocumentoSGD deleteDocumentoSGD(DocumentoSGD documentoSGD) {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+		deleteDocumentoSGD(
+			com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+				documentoSGD) {
+
 		return getService().deleteDocumentoSGD(documentoSGD);
 	}
 
@@ -104,8 +107,9 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @return the documento sgd that was removed
 	 * @throws PortalException if a documento sgd with the primary key could not be found
 	 */
-	public static DocumentoSGD deleteDocumentoSGD(long documentoId)
-		throws PortalException {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+			deleteDocumentoSGD(long documentoId)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().deleteDocumentoSGD(documentoId);
 	}
@@ -113,14 +117,17 @@ public class DocumentoSGDLocalServiceUtil {
 	/**
 	 * @throws PortalException
 	 */
-	public static PersistedModel deletePersistedModel(
-			PersistedModel persistedModel)
-		throws PortalException {
+	public static com.liferay.portal.kernel.model.PersistedModel
+			deletePersistedModel(
+				com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().deletePersistedModel(persistedModel);
 	}
 
-	public static DynamicQuery dynamicQuery() {
+	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
+		dynamicQuery() {
+
 		return getService().dynamicQuery();
 	}
 
@@ -130,7 +137,9 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
 	 */
-	public static <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -146,8 +155,9 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
 	 */
-	public static <T> List<T> dynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end) {
 
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
@@ -165,9 +175,10 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
 	 */
-	public static <T> List<T> dynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<T> orderByComparator) {
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 
 		return getService().dynamicQuery(
 			dynamicQuery, start, end, orderByComparator);
@@ -179,7 +190,9 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows matching the dynamic query
 	 */
-	public static long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -191,14 +204,31 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @return the number of rows matching the dynamic query
 	 */
 	public static long dynamicQueryCount(
-		DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static DocumentoSGD fetchDocumentoSGD(long documentoId) {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+		fetchDocumentoSGD(long documentoId) {
+
 		return getService().fetchDocumentoSGD(documentoId);
+	}
+
+	public static java.util.List
+		<com.co.superintendencia.sociedades.builder.model.DocumentoSGD>
+			findByUrlPagina(String urlPagina) {
+
+		return getService().findByUrlPagina(urlPagina);
+	}
+
+	public static java.util.List
+		<com.co.superintendencia.sociedades.builder.model.DocumentoSGD>
+			findByUrlPaginaAndDate(
+				String urlPagina, java.util.Date fechaActual) {
+
+		return getService().findByUrlPaginaAndDate(urlPagina, fechaActual);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
@@ -214,8 +244,9 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @return the documento sgd
 	 * @throws PortalException if a documento sgd with the primary key could not be found
 	 */
-	public static DocumentoSGD getDocumentoSGD(long documentoId)
-		throws PortalException {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+			getDocumentoSGD(long documentoId)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getDocumentoSGD(documentoId);
 	}
@@ -231,7 +262,10 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param end the upper bound of the range of documento sgds (not inclusive)
 	 * @return the range of documento sgds
 	 */
-	public static List<DocumentoSGD> getDocumentoSGDs(int start, int end) {
+	public static java.util.List
+		<com.co.superintendencia.sociedades.builder.model.DocumentoSGD>
+			getDocumentoSGDs(int start, int end) {
+
 		return getService().getDocumentoSGDs(start, end);
 	}
 
@@ -263,8 +297,9 @@ public class DocumentoSGDLocalServiceUtil {
 	/**
 	 * @throws PortalException
 	 */
-	public static PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+	public static com.liferay.portal.kernel.model.PersistedModel
+			getPersistedModel(java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
 	}
@@ -279,14 +314,34 @@ public class DocumentoSGDLocalServiceUtil {
 	 * @param documentoSGD the documento sgd
 	 * @return the documento sgd that was updated
 	 */
-	public static DocumentoSGD updateDocumentoSGD(DocumentoSGD documentoSGD) {
+	public static com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+		updateDocumentoSGD(
+			com.co.superintendencia.sociedades.builder.model.DocumentoSGD
+				documentoSGD) {
+
 		return getService().updateDocumentoSGD(documentoSGD);
 	}
 
 	public static DocumentoSGDLocalService getService() {
-		return _service;
+		return _serviceTracker.getService();
 	}
 
-	private static volatile DocumentoSGDLocalService _service;
+	private static ServiceTracker
+		<DocumentoSGDLocalService, DocumentoSGDLocalService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DocumentoSGDLocalService.class);
+
+		ServiceTracker<DocumentoSGDLocalService, DocumentoSGDLocalService>
+			serviceTracker =
+				new ServiceTracker
+					<DocumentoSGDLocalService, DocumentoSGDLocalService>(
+						bundle.getBundleContext(),
+						DocumentoSGDLocalService.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 
 }

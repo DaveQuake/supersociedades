@@ -1,0 +1,4 @@
+Bundle-Name: gov-co-supersociedades-listado-documentos
+Bundle-SymbolicName: gov.co.supersociedades.listado.documentos
+Bundle-Version: 1.0.0
+Export-Package: gov.co.supersociedades.listado.documentos.constants

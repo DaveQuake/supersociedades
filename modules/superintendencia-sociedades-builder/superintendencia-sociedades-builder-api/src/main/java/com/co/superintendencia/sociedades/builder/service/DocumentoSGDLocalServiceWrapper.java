@@ -223,6 +223,24 @@ public class DocumentoSGDLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List
+		<com.co.superintendencia.sociedades.builder.model.DocumentoSGD>
+			findByUrlPagina(String urlPagina) {
+
+		return _documentoSGDLocalService.findByUrlPagina(urlPagina);
+	}
+
+	@Override
+	public java.util.List
+		<com.co.superintendencia.sociedades.builder.model.DocumentoSGD>
+			findByUrlPaginaAndDate(
+				String urlPagina, java.util.Date fechaActual) {
+
+		return _documentoSGDLocalService.findByUrlPaginaAndDate(
+			urlPagina, fechaActual);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 

@@ -1,0 +1,6 @@
+Bundle-Name: gov-co-supersociedades-sgd-sb-service
+Bundle-SymbolicName: gov.co.supersociedades.sgd.sb.service
+Bundle-Version: 1.0.0
+Liferay-Require-SchemaVersion: 1.0.0
+Liferay-Service: true
+-dsannotations-options: inherit

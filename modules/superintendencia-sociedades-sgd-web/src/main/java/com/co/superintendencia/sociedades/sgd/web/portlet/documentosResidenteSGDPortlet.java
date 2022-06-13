@@ -1,16 +1,12 @@
 package com.co.superintendencia.sociedades.sgd.web.portlet;
 
-import com.co.superintendencia.sociedades.builder.model.DocumentoSGD;
-import com.co.superintendencia.sociedades.builder.service.DocumentoSGDLocalServiceUtil;
-import com.co.superintendencia.sociedades.sgd.web.constants.documentosResidenteSGDPortletKeys;
-
+import com.co.superintendencia.sociedades.builder.service.DocumentoSGDLocalService;
+import com.co.superintendencia.sociedades.sgd.web.constants.Constantes;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -18,6 +14,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author LENOVO
@@ -31,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 		"javax.portlet.display-name=documentosResidenteSGD",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + documentosResidenteSGDPortletKeys.DOCUMENTOSRESIDENTESGD,
+		"javax.portlet.name=" + Constantes.DOCUMENTOSRESIDENTESGD,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
@@ -39,39 +36,21 @@ import org.osgi.service.component.annotations.Component;
 )
 public class documentosResidenteSGDPortlet extends MVCPortlet {
 	
+	@Reference
+	private DocumentoSGDLocalService _documentoSGDLocalService;
+	
 	@Override
 	public void render(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
-		
-		System.out.println("pasamos por el render --->");
+
 		String urlPagina=ParamUtil.getString(renderRequest, "urlPagina", "");
-		String[] urlPaginaArray = null;
-		System.out.println("urlPagina  --->" + urlPagina);
-				
 		if(urlPagina == "") {
-			System.out.println("******Esta es la request URL actual******: " + PortalUtil.getCurrentURL(renderRequest));	
 			String urlPaginaActual = PortalUtil.getCurrentURL(renderRequest);
-			urlPaginaArray = urlPaginaActual.split("\\?"); 
-			System.out.println("urlPaginaArray: " + urlPaginaArray[0]);
+			String[] urlPaginaArray = urlPaginaActual.split("\\?"); 
 			urlPagina = urlPaginaArray[0];
 		}
 
-
-		List<DocumentoSGD> documentos=DocumentoSGDLocalServiceUtil.getDocumentoSGDs(-1, -1);
-		
-		ArrayList<DocumentoSGD> documentosPagina = new ArrayList<DocumentoSGD>();
-		
-		for(DocumentoSGD str : documentos){
-		    //imprimimos el objeto pivote
-			
-		    if(str.getUrlPagina().equals(urlPagina)) {
-		    	documentosPagina.add(str);
-		    }		    
-		}
-		
-		System.out.println("----documentosPagina " + documentosPagina);
-		
-		renderRequest.setAttribute("documentos", documentosPagina );
+		renderRequest.setAttribute("documentos", _documentoSGDLocalService.findByUrlPagina(urlPagina));
 		super.render(renderRequest, renderResponse);
 	}
 }

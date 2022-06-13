@@ -1,0 +1,4 @@
+Bundle-Name: gov-co-supersociedades-sgd-admin
+Bundle-SymbolicName: gov.co.supersociedades.sgd.admin
+Bundle-Version: 1.0.0
+Export-Package: gov.co.supersociedades.sgd.admin.constants

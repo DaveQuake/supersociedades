@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="gov.co.supersociedades.sgd.sb.model.DocumentoSGD">
+		<field name="uuid" type="String" />
+		<field name="documentoId" type="long" />
+		<field name="nombre" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="inicioPublicacion" type="Date" />
+		<field name="finPublicacion" type="Date" />
+		<field name="epigrafe" type="String" />
+		<field name="urlDocumento" type="String" />
+		<field name="urlPagina" type="String" />
+		<field name="categoria" type="String" />
+		<field name="tema" type="String" />
+		<field name="etiqueta" type="String" />
+		<field name="palabraClave" type="String" />
+	</model>
+</model-hints>

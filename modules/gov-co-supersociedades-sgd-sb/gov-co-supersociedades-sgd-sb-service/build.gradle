@@ -1,0 +1,11 @@
+dependencies {
+	compile project(":modules:gov-co-supersociedades-sgd-sb:gov-co-supersociedades-sgd-sb-api")
+
+	compileOnly group: "com.liferay.portal", name: "release.dxp.api"
+}
+
+buildService {
+	apiDir = "../gov-co-supersociedades-sgd-sb-api/src/main/java"
+}
+
+group = "gov.co.supersociedades.sgd.sb"

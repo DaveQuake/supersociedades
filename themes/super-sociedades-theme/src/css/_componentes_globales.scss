@@ -1,0 +1,235 @@
+/*Estilos para elementos globales del portal*/
+
+/*Botones*/
+.sociedades-btn-primary {
+    height: 40px;
+    background: $active-color;
+    padding: 7px 30px 7px 30px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $white-font-color;
+    font-weight: bold;
+}
+
+.sociedades-btn-lg-primary {
+    height: 40px;
+    background: $active-color;
+    padding: 7px 16px 7px 16px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $white-font-color;
+    font-weight: bold;
+}
+
+.sociedades-btn-secondary {
+    height: 40px;
+    background: $line-boton-color;
+    border: 1.5px solid #3366CC;
+    padding: 7px 30px 7px 30px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $marine-font-color;
+    font-weight: bold;
+}
+
+.sociedades-btn-lg-secondary {
+    height: 40px;
+    background: $line-boton-color;
+    border: 1.5px solid #3366CC;
+    padding: 7px 16px 7px 16px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $marine-font-color;
+    font-weight: bold;
+}
+
+.sociedades-btn-tertiary {
+    color: $marine-font-color;
+    font-size: $button-font-size-14;
+    text-decoration-line: underline;
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+.sociedades-btn-disabled-primary {
+    height: 40px;
+    background: $light-silver-color;
+    padding: 7px 30px 7px 30px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $white-font-color;
+    font-weight: 700;
+}
+
+.sociedades-btn-lg-disabled-primary {
+    height: 40px;
+    background: $light-silver-color;
+    padding: 7px 16px 7px 16px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $white-font-color;
+    font-weight: 700;
+}
+
+.sociedades-btn-disabled-secondary {
+    height: 40px;
+    background: $line-boton-color;
+    border: 1.5px solid #E5E1E6;
+    padding: 7px 30px 7px 30px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $silver-font-color;
+    font-weight: bold;
+}
+
+.sociedades-btn-lg-disabled-secondary {
+    height: 40px;
+    background: $line-boton-color;
+    border: 1.5px solid #E5E1E6;
+    padding: 7px 16px 7px 16px;
+    border-radius: 30px;
+    font-size: $button-font-size-14;
+    color: $silver-font-color;
+    font-weight: bold;
+}
+
+.sociedades-btn-disabled-tertiary {
+    color: $silver-font-color;
+    text-decoration-line: underline;
+    text-transform: capitalize;
+    font-size: $button-font-size-14;
+}
+
+.sociedades-btn-primary:hover {
+    background: $dark-blue;
+}
+
+.sociedades-btn-lg-primary:hover {
+    background: $dark-blue;
+}
+
+.sociedades-btn-secondary:hover {
+    background: $dark-blue;
+    color: $white-font-color;
+}
+
+.sociedades-btn-lg-secondary:hover {
+    background: $dark-blue;
+    color: $white-font-color;
+}
+
+.sociedades-btn-tertiary:hover {
+    color: $dark-blue-font-color;
+    text-decoration-line: underline;
+}
+
+/*Tarjetas clickeables*/
+.sociedades-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    width: 155px;
+    height: 148px;
+    filter: drop-shadow(0px 2px 0px rgba(25, 37, 56, 0.05));
+    background: $line-boton-color;
+    color: $dark-blue-font-color;
+    font-size: $button-font-size-12;
+    font-weight: 500;
+}
+
+.sociedades-card:hover {
+    background: $green-color;
+    color: $white-font-color;
+}
+
+.sociedades-card-disabled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    width: 155px;
+    height: 148px;
+    filter: drop-shadow(0px 2px 0px rgba(25, 37, 56, 0.05));
+    background: $line-boton-color;
+    color: $gray-font-color;
+    font-size: $button-font-size-12;
+    font-weight: 500;
+}
+
+.sociedades-assistant-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 15px;
+    width: 187px;
+    height: 52px;
+    background: $line-boton-color;
+    border: 1px solid #A5C5ED;
+    box-shadow: 0px 2px 0px rgba(36, 46, 57, 0.05);
+    border-radius: 5px;
+    color: $dark-gray-font-color;
+    font-size: $button-font-size-12;
+}
+
+.sociedades-assistant-card-disabled {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 15px;
+    width: 187px;
+    height: 52px;
+    background: $line-boton-color;
+    border: 1px solid #E0E0E0;
+    box-shadow: 0px 2px 0px rgba(36, 46, 57, 0.05);
+    border-radius: 5px;
+    color: $gray-font-color;
+    font-size: $button-font-size-12;
+}
+
+.sociedades-assistant-card:hover {
+    background: $green-color;
+    color: $white-font-color;
+    box-shadow: 0px 2px 0px rgba(36, 46, 57, 0.05);
+    border-radius: 5px;
+}
+
+.sociedades-assistant-3-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: $line-boton-color;
+    width: 216px;
+    height: 66px;
+    padding: 33px 24px;
+    border: 1px solid #A5C5ED;
+    border-radius: 4px;
+    color: $marine-font-color;
+    font-size: $card-font-size-16;
+    font-weight: 700;
+}
+
+.sociedades-assistant-3-card:hover {
+    background: $green-color;
+    color: $white-font-color;
+    border-radius: 4px;
+}
+
+.sociedades-assistant-3-card-disabled {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: $line-boton-color;
+    width: 216px;
+    height: 66px;
+    padding: 33px 24px;
+    border: 1px solid #BDBDBD;
+    border-radius: 4px;
+    color: $gray-font-color;
+    font-size: $card-font-size-16;
+    font-weight: 700;
+}

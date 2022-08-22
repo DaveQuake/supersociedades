@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE look-and-feel PUBLIC "-//Liferay//DTD Look and Feel 7.3.0//EN" "http://www.liferay.com/dtd/liferay-look-and-feel_7_3_0.dtd">
+
+<look-and-feel>
+	<compatibility>
+		<version>7.3.0+</version>
+	</compatibility>
+	<theme id="super-sociedades" name="super-sociedades">
+		<template-extension>ftl</template-extension>
+		<settings>
+		    <!--<setting configurable="true" key="footer-article-id-super" type="text" value="" />-->
+			<setting configurable="true" key="script-g" type="textarea" value="" />
+			<setting configurable="true" key="link-gov-nacional" type="text" value="https://www.gov.co/home/" />
+			<setting configurable="true" key="url-marca-col" type="text" value="https://www.colombia.co/" />
+			<setting configurable="true" key="url-login" type="text" value="" />
+		    <setting configurable="true" key="url-home" type="text" value="" />
+			<setting configurable="true" key="image-logo" type="text" value="" />
+			<setting configurable="true" key="image-gobierno" type="text" value="" />
+			<setting configurable="true" key="image-contraste" type="text" value="" />
+			<setting configurable="true" key="image-text-down" type="text" value="" />
+			<setting configurable="true" key="image-text-up" type="text" value="" />
+			<setting configurable="true" key="image-relief" type="text" value="" />
+			<setting configurable="true" key="url-centro-relevo" type="text" value="https://centroderelevo.gov.co/632/w3-channel.html" />
+			<setting configurable="true" key="image-convertic" type="text" value="" />
+			<setting configurable="true" key="url-convertic" type="text" value="https://www.convertic.gov.co/641/w3-channel.html" />
+			<setting configurable="true" key="image-chat" type="text" value="" />
+			<setting configurable="true" key="image-marca-pais" type="text" value="" />
+			<setting configurable="true" key="url-idioma" type="text" value="" />
+
+			<setting configurable="true" key="url-resuelva-sucaso" type="text" value="" />
+			<setting configurable="true" key="url-participación" type="text" value="" />
+			<setting configurable="true" key="url-denuncias" type="text" value="" />
+			<setting configurable="true" key="url-pqrsd" type="text" value="" />
+			<setting configurable="true" key="url-chat de atención" type="text" value="" />
+
+			<setting configurable="true" key="show-breadcrumbs" options="true,false" type="select" value="true" />
+    		<setting configurable="true" key="portlet-setup-show-borders-default" options="true,false" type="select" value="true" />
+    		<setting configurable="true" key="show-page-title" options="true,false" type="select" value="true"/>
+
+		</settings>
+		<portlet-decorator id="barebone" name="Barebone">
+			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="borderless" name="Borderless">
+			<portlet-decorator-css-class>portlet-borderless</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="decorate" name="Decorate">
+			<default-portlet-decorator>true</default-portlet-decorator>
+			<portlet-decorator-css-class>portlet-decorate</portlet-decorator-css-class>
+		</portlet-decorator>
+	</theme>
+</look-and-feel>

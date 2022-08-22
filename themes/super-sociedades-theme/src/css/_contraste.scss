@@ -1,0 +1,29 @@
+/*Fondo body*/
+$black-bg-color: #111111;
+$white-bg-color: #FFFFFF;
+
+/*Header*/
+$color-bg-light-header: #3366CC;
+
+/*Menú*/
+$color-bg-light-menu:#F6F8F9;
+$color-light-text-menu:#f1ecec;
+$color-dark-text-menu:#4B4B4B;
+
+/*Footer*/
+$color-light-footer: #FFFFFF;
+$color-light-top-footer:#1E2F97;
+$color-light-top-footer-sc:#069169;
+$color-light-text-footer:#4B4B4B;
+$color-dark-text-footer:#FFFFFF;
+$color-light-links-footer:#004884;
+$color-light-other-links:#0B457F;
+
+body {
+	background: $white-bg-color;
+	transition: .3s ease all;
+	
+	&.dark {
+		background-color: $black-bg-color;
+	}
+}

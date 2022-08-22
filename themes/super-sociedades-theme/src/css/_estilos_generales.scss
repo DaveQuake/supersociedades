@@ -1,0 +1,198 @@
+/*Este archivo sobreescribe los estilos generales del portal*/
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap');
+
+/*
+.portlet {
+    position: initial !important;
+}*/
+
+h1{
+    font-weight: bold !important;
+    font-size: 2rem !important;
+    font-family: 'Montserrat', sans-serif !important;    
+    color: #2a477a !important;
+
+    margin-top: 10px;
+    padding: 10px;
+}
+
+h2{
+    font-weight: bold !important;
+    font-size: 1.125rem !important;
+    font-family: 'Montserrat', sans-serif !important;   
+    color: #2a477a !important; 
+
+    margin-top: 10px;
+    padding: 10px;
+}
+
+h3{
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    font-family: 'Montserrat', sans-serif !important;    
+    color: #2a477a !important;
+
+    margin-top: 10px;
+    padding: 10px;
+}
+
+h4{
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    font-family: 'Montserrat', sans-serif !important;    
+    color: #2a477a !important;
+}
+
+h5{
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    font-family: 'Montserrat', sans-serif !important;    
+    color: #2a477a !important;
+}
+
+body{
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+}
+
+p{
+    color: #3d3935 !important;
+}
+
+a{
+    color: #2A54A7;
+}
+
+a.btn-primary{
+    font-size: 0.875rem !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: bold !important; 
+    /*padding: 0 30px !important;*/
+    padding: 6px 30px;
+    background-color: #3366cc !important;
+}
+
+a.btn-primary:hover{
+    font-size: 0.875rem !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: bold !important; 
+    /*padding: 0 30px !important;*/
+    padding: 6px 30px; 
+    background-color: #2a477a !important;
+}
+
+a.btn-secondary{
+    font-size: 0.875rem !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: bold !important; 
+    /*padding: 0 30px !important;*/
+    padding: 6px 30px;
+    background-color: white !important;
+    color:#3366cc !important;
+    border-color: #3366cc !important;
+}
+
+
+
+.btn-primary {
+    background-color: #3366cc !important;
+    border-color: #3366cc !important;
+    border-radius: 23px !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: #2a477a !important;
+    border-color: transparent !important;
+    border-radius: 23px !important;
+    color: #fff !important;
+}
+
+.btn-secondary {
+    background-color: #fff !important;
+    border-color: #3366cc !important;
+    color: #3366cc !important;
+    border-radius: 23px !important;
+}
+
+.btn-secondary:hover {
+    background-color: #2a477a !important;
+    border-color: transparent !important;
+    border-radius: 23px !important;
+    color: #fff !important;
+}
+
+.btn-link {
+    border-radius: 1px !important;
+    box-shadow: none  !important;
+    color: #3366cc  !important;
+    font-weight: 400  !important;
+    text-decoration: underline  !important;
+}
+
+.btn-link:hover {
+    border-radius: 1px !important;
+    box-shadow: none !important;
+    color: #2a477a !important;
+    font-weight: 400 !important;
+    text-decoration: underline !important;
+}
+
+.btn-outline-light {
+    border-color: #f8f9fa !important;
+    color: #f8f9fa !important;
+    border-radius: 23px !important;
+}
+
+.btn-outline-light:hover {
+    background-color: #f8f9fa !important;
+    border-color: #f8f9fa !important;
+    color: #212529 !important;
+    border-radius: 23px !important;
+}
+
+
+.carousel-item img{
+    /* width: 776px !important;
+    height: 294px !important; */
+
+    width: 48.5rem !important;
+    height: 18.375rem !important;
+}
+
+
+
+//link visited -adicionar-
+
+
+
+
+
+
+
+@media (max-width: 767px) {
+
+    h1{
+        font-weight: bold !important;
+        font-size: 1.25rem !important;
+        font-family: 'Montserrat', sans-serif !important;    
+        color: #2a477a !important;
+    }
+    
+    h2{
+        font-weight: bold !important;
+        font-size: 1.125rem !important;
+        font-family: 'Montserrat', sans-serif !important;   
+        color: #2a477a !important; 
+    }
+    
+    h3{
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        font-family: 'Montserrat', sans-serif !important;    
+        color: #2a477a !important;
+    }
+
+}

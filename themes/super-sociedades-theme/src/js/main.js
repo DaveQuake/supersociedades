@@ -1,6 +1,10 @@
 $(".bar-search").find(".search-bar-keywords-input").attr("placeholder", "Buscar");
 $(".bar-search").find(".input-group-item.search-bar-keywords-input-wrapper").attr("padding", "0 !important");
 
+/*
+if($(".bar-search").find(".search-bar-keywords-input").length > 1){
+  $(".bar-search").find(".search-bar-keywords-input").attr("placeholder", "Buscar");
+}*/
 
 //Contraste
 var contras = false;
@@ -119,6 +123,9 @@ function redirect_files(url_dtn){
   //let pag_view_file_our = "/web/supersociedades/ver_archivos";
   let pag_view_file_our = "/web/guest/ver_archivos";
 
+
+	//e.preventDefault();
+	//let url_dtn = $(this).attr("href");
 	let file_entid = "";
 	console.log("La url es: " + url_dtn);
 
@@ -216,15 +223,47 @@ function redirect_files(url_dtn){
 	///////////////////////////////////////////////////////////////////////////////////////////
 	}else if(url_dtn.includes("/documents/") ){
 
+		/*let parturl = url_dtn.split("/documents/")[1];
+
+		if( parturl.includes(".ppt")  ){
+			let parturl2 = parturl.split(".ppt")[0];
+
+			let indice = parturl2.lastIndexOf("/");
+			let ind = indice + 1;
+
+			console.log(parturl2);
+		}*/
+		console.log("ulrBase sin recorte: "+url_dtn);
 		let last_split = url_dtn.lastIndexOf("/");
 		let url_file = url_dtn.substring(0,last_split);
 
+		console.log("ulrBase cor recorte: "+url_file);
+
 
 		if( (url_file.includes(".vsd")) || (url_file.includes(".vsdx")) ){
-			window.location.href = pre_vsd + url_file;
+			window.open(pre_vsd + url_file, '_blank');
+			//window.location.href = pre_vsd + url_file;
 		}else{
 
-			window.location.href = pag_view_file_our + "?url=" + url_file + "?previewFileIndex=1";
+			//console.log("La url del archivo es: " + url_file + "?previewFileIndex=1");
+			//////window.location.href = url_file + "?previewFileIndex=1";
+
+			if( url_file.includes(".pdf") || url_file.includes(".PDF") ){
+                  
+        //console.log("Diego ulrBase sin cortes, es PDF: "+url_dtn);
+        window.open(url_dtn, '_blank');
+
+      }
+      if( url_file.includes(".doc") || url_file.includes(".DOC") || url_file.includes(".docx") || url_file.includes(".DOCX") || url_file.includes(".xls") || url_file.includes(".XLS") || url_file.includes(".xlsx") || url_file.includes(".XLSX")){
+                  
+        //console.log("Diego ulrBase sin cortes, es PDF: "+url_dtn);
+        window.open("https://view.officeapps.live.com/op/view.aspx?src="+url_file, '_blank');
+				
+      }else{
+        //console.log("Diego ulrBase no es PDF: "+url_dtn);
+        window.open(url_dtn, '_blank');
+        //window.location.href = pag_view_file_our + "?url=" + url_file + "?previewFileIndex=1";
+			}
 
 		}
 	
@@ -255,15 +294,22 @@ function redirect_files(url_dtn){
 				          		let url_doc_vsd = window.location.href = pre_vsd + window.location.origin +  "/documents/" + obj.groupId + "/" + obj.folderId + "/" + obj.title;
 
 				          		if( url_doc_vsd.includes("." + obj.extension)){
+				          			//window.open(url_doc_vsd, '_blank');
 				          			window.location.href = url_doc_vsd;
 				          		}else{
+				          			//window.open(url_doc_vsd + "." + obj.extension, '_blank');
 				          			window.location.href = url_doc_vsd + "." + obj.extension;
 				          		}
 
 				        }else if( (obj.extension == "pdf") || (obj.extension == "png") || (obj.extension == "jpg") || (obj.extension == "jpeg") || (obj.extension == "gif") || (obj.extension == "bmp") || (obj.extension == "tif") || (obj.extension == "tiff") || (obj.extension == "dib") || (obj.extension == "jpe") || (obj.extension == "jfif") || (obj.extension == "heic") || (obj.extension == "hif") ){
+                  //window.open(url_dtn, '_blank');
                   window.location.href = url_dtn;
                 }
                 else{
+						  	//console.log("la url es:");
+						    //console.log("/documents/" + obj.groupId + "/" + obj.folderId + "/" + obj.title + "?previewFileIndex=1");
+						    ///window.location.href= "/documents/" + obj.groupId + "/" + obj.folderId + "/" + obj.title + "?previewFileIndex=1";
+						    //window.open(pag_view_file_our + "?url=" + "/documents/" + obj.groupId + "/" + obj.folderId + "/" + obj.title + "?previewFileIndex=1", '_blank');
 						    window.location.href = pag_view_file_our + "?url=" + "/documents/" + obj.groupId + "/" + obj.folderId + "/" + obj.title + "?previewFileIndex=1"
 							  }						  
 						  }
@@ -272,6 +318,7 @@ function redirect_files(url_dtn){
 		);
 
 	}else{
+		//window.open(url_dtn, '_blank');
 		window.location.href = url_dtn;
 	}
 
@@ -334,7 +381,7 @@ $(function() {
       $(this).unbind('click');
       $(this).trigger("click");
     }else{
-    redirect_files(url_dtn);
+    	redirect_files(url_dtn);
       console.log("Agregamosel evento");
     }
   })

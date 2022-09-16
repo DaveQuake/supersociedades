@@ -16,6 +16,7 @@ public class SupersociedadesBuscadorInternoPortletKeys {
 	public static final String CONFIG_BAJADA = "bajada";
 	public static final String CONFIG_DLFILE = "dlfile";
 	public static final String CONFIG_JA = "journalArticle";
+	public static final String CONFIG_PAGINADOR = "paginador";
 
 	
 }

@@ -4,6 +4,9 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
@@ -16,9 +19,14 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.RenderRequest;
@@ -33,22 +41,35 @@ import gov.co.supersociedades.buscador.interno.utils.BuscadorUtils;
 @Component(immediate=true, service=BuscadorHelper.class)
 public class BuscadorHelper {
 
-	public List<ArticuloBusqueda> searchByCategory(RenderRequest renderRequest, String keyword, long[] categoria, 
-			List<ArticuloBusqueda> listaArticulos, boolean isDlFile, boolean isJournalArticle) {
+	private Comparator<ArticuloBusqueda> orderByFecha = new Comparator<ArticuloBusqueda>() {
+        @Override
+        public int compare(ArticuloBusqueda articuloUno, ArticuloBusqueda articuloDos) {
+			return articuloUno.getDateModificate().compareTo(articuloDos.getDateModificate());
+        }
+    };
+	
+	public List<ArticuloBusqueda> searchByCategory(RenderRequest renderRequest, String keyword, long[] categoria, boolean isDlFile, 
+			boolean isJournalArticle, String start, String end, boolean pagination) {
+		List<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>();
 		
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		SearchContext searchContext =  _searchContextHelper.getSearchContext(td, keyword, categoria, isDlFile, isJournalArticle);
+		int tipo = getTipo(isDlFile, isJournalArticle);
+		SearchContext searchContext =  _searchContextHelper.getSearchContext(td, keyword, categoria, tipo, start, end, pagination);
 		
 		try {
 			FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
+			
+			
+			
 			Hits hits = facetedSearcher.search(searchContext);
 			List<Document> docs = hits.toList();
+			Collections.sort(docs,sortDocument);
 			
 			if(Validator.isNotNull(docs)){
 				AssetCategory categoriaPadre = _buscadorUtils.getCategoriaPadre(_buscadorUtils.getCategoria(categoria[0]));
 				Set<String> setArticles = new HashSet<>();
 
-				for (Document doc : docs) {
+				for (Document doc : docs.subList(Integer.parseInt(start),Integer.parseInt(end))) {
 					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
 					
 					if(entryClassName.equalsIgnoreCase(DLFileEntry.class.getName()) && isDlFile){
@@ -72,14 +93,50 @@ public class BuscadorHelper {
 					}
 				}
 			}
-			
 		}catch (Exception e) {
 			_log.debug(e);
 		}
 		
+		
 		return listaArticulos;
 	}
 	
+	public static Comparator<Document> sortDocument = new Comparator<Document>() {
+		public int compare(Document doc1, Document doc2) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				Date dateUno = formatter.parse(doc1.get(Field.MODIFIED_DATE));
+				Date dateDos = formatter.parse(doc2.get(Field.MODIFIED_DATE));
+				int compareValue = dateUno.compareTo(dateDos);
+				if (compareValue == 0) {
+					return 0;
+				}
+				if (compareValue < 0) {
+					return -1;
+				} else {
+					return 1;
+				}
+			} catch (Exception e) {
+				return 0;
+			}
+			
+			
+			
+		}
+	};
+	
+	private int getTipo(boolean isDlFile, boolean isJournalArticle) {
+		if(isDlFile && !isJournalArticle) {
+			return 1;
+		}else if(!isDlFile && isJournalArticle) {
+			return 2;
+		}else if(isDlFile && isJournalArticle){
+			return 3;
+		}else {
+			return 3;
+		}
+	}
+
 	public List<ContadorCategorias> getCountsByCategory(RenderRequest renderRequest, String keyword, long categoryDefault, boolean isDlFile, boolean isJournalArticle) {
 		List<ContadorCategorias> listaCategorias = new ArrayList<ContadorCategorias>();
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
@@ -89,35 +146,21 @@ public class BuscadorHelper {
 			try {
 				for (AssetCategory childCategory : childCategories) {
 					long[] childCategoryId = {childCategory.getCategoryId()};
-					int contador = 0;
 					
-					if(isDlFile) {
-						SearchContext searchContext =  _searchContextHelper.getSearchContext(td, keyword, childCategoryId, true, false);
-						try {
-							FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
-							Hits hits = facetedSearcher.search(searchContext);
-							contador = contador + hits.getLength();
-						}catch (Exception e) {
-							_log.debug(e);
+					try {
+						SearchContext searchContext =  _searchContextHelper.getSearchContextCount(td, keyword, childCategoryId, getTipo(isDlFile, isJournalArticle));
+						FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
+						Hits hits = facetedSearcher.search(searchContext);
+						
+						if(hits.getLength() > 0) {
+							ContadorCategorias cont = new ContadorCategorias();
+							cont.setCategory(childCategory);
+							cont.setContador(hits.getLength());
+							listaCategorias.add(cont);
 						}
-					}
-					
-					if(isJournalArticle) {
-						SearchContext searchContext =  _searchContextHelper.getSearchContext(td, keyword, childCategoryId, false, true);
-						try {
-							FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
-							Hits hits = facetedSearcher.search(searchContext);
-							contador = contador + hits.getLength();
-						}catch (Exception e) {
-							_log.debug(e);
-						}
-					}
-					
-					if(contador > 0) {
-						ContadorCategorias cont = new ContadorCategorias();
-						cont.setCategory(childCategory);
-						cont.setContador(contador);
-						listaCategorias.add(cont);
+						
+					} catch (Exception e) {
+						_log.error(e);
 					}
 				}
 			} catch (Exception e) {
@@ -127,6 +170,25 @@ public class BuscadorHelper {
 		return listaCategorias;
 	}
 
+	public int getCountByCategory(RenderRequest renderRequest, String keyword, long[] categoria, boolean isDlFile, boolean isJournalArticle) {
+		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		int tipo = getTipo(isDlFile, isJournalArticle);
+		SearchContext searchContext =  _searchContextHelper.getSearchContext(td, keyword, categoria, tipo, "", "", false);
+		
+		int contador = 0;
+		try {
+			FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
+			Hits hits = facetedSearcher.search(searchContext);
+			contador = hits.getLength();
+		}catch (Exception e) {
+			_log.error(e);
+		}
+		
+		return contador;
+	}
+	
+	
+	
 	
 	private static final Log _log = LogFactoryUtil.getLog(BuscadorHelper.class);
 	

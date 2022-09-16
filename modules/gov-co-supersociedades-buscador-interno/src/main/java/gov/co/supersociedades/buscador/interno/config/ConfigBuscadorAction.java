@@ -37,6 +37,7 @@ public class ConfigBuscadorAction extends DefaultConfigurationAction {
 			String bajada = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_BAJADA);
 			String dlfile = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_DLFILE);
 			String journalArticle = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_JA);
+			String paginador = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_PAGINADOR);
 
 			PortletPreferences prefs = actionRequest.getPreferences();
 			prefs.setValue("idCategory", idCategory);
@@ -44,6 +45,7 @@ public class ConfigBuscadorAction extends DefaultConfigurationAction {
 			prefs.setValue("bajada", bajada);
 			prefs.setValue("dlfile", dlfile);
 			prefs.setValue("journalArticle", journalArticle);
+			prefs.setValue("paginador", paginador);
 			prefs.store();
 
 			super.processAction(portletConfig, actionRequest, actionResponse);

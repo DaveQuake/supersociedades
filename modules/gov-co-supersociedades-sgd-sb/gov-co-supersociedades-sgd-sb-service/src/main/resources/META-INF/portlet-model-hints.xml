@@ -15,5 +15,6 @@
 		<field name="tema" type="String" />
 		<field name="etiqueta" type="String" />
 		<field name="palabraClave" type="String" />
+		<field name="numRadicado" type="String" />
 	</model>
 </model-hints>

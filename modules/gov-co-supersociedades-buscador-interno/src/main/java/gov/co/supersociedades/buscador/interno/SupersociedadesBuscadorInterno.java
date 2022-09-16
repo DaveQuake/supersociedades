@@ -3,7 +3,9 @@ package gov.co.supersociedades.buscador.interno;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,13 +53,6 @@ public class SupersociedadesBuscadorInterno extends MVCPortlet {
 	@Reference
 	private BuscadorHelper _buscadorHelper;
 	
-	private Comparator<ArticuloBusqueda> orderByFecha = new Comparator<ArticuloBusqueda>() {
-        @Override
-        public int compare(ArticuloBusqueda articuloUno, ArticuloBusqueda articuloDos) {
-			return articuloUno.getDateModificate().compareTo(articuloDos.getDateModificate());
-        }
-    };
-	
 	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
@@ -67,24 +62,29 @@ public class SupersociedadesBuscadorInterno extends MVCPortlet {
 		renderRequest.setAttribute("titulo", GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_TITULO, StringPool.DASH)));
 		renderRequest.setAttribute("bajada", GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_BAJADA, StringPool.DASH)));
 		
+		String paginador = GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_PAGINADOR, "10"));
+		renderRequest.setAttribute("paginador", (Validator.isNotNull(paginador)) ? paginador : "10");
+		
 		String keyword = _buscadorUtils.getKeywordURL(httpReq);
 		renderRequest.setAttribute("keyword", keyword);
 		
 		String category = _buscadorUtils.getCategoryURL(httpReq);
 		renderRequest.setAttribute("category", category);
 		
+		String start = _buscadorUtils.getPaginator(httpReq, "start", paginador);
+		renderRequest.setAttribute("start", Integer.parseInt(start));
+		
+		String end = _buscadorUtils.getPaginator(httpReq, "end", paginador);
+		renderRequest.setAttribute("end", Integer.parseInt(end));
+		
 		long[] categoria = {_buscadorUtils.getCategorias(httpReq, prefs)};
 		long categoryDefault = GetterUtil.getLong(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY, "0"));
 		
 		boolean isDlFile = GetterUtil.getBoolean(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_DLFILE, StringPool.FALSE));
 		boolean isJournalArticle = GetterUtil.getBoolean(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_JA, StringPool.FALSE));
-		
-		List<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>();
-		if(isDlFile) _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, listaArticulos, true, false);
-		if(isJournalArticle) _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, listaArticulos, false, true);
-		Collections.sort(listaArticulos, orderByFecha);
-		
-		renderRequest.setAttribute("listaArticulos", listaArticulos);
+
+		renderRequest.setAttribute("listaArticulos", _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle, start, end, true));
+		renderRequest.setAttribute("totalArticulos", _buscadorHelper.getCountByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle));
 		renderRequest.setAttribute("listaCategorias", _buscadorHelper.getCountsByCategory(renderRequest, keyword, categoryDefault, isDlFile, isJournalArticle));
 		
 		super.doView(renderRequest, renderResponse);

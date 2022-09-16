@@ -11,5 +11,6 @@ create table gov_documento_sgd (
 	categoria VARCHAR(75) null,
 	tema VARCHAR(75) null,
 	etiqueta VARCHAR(75) null,
-	palabraClave VARCHAR(75) null
+	palabraClave VARCHAR(75) null,
+	numRadicado VARCHAR(75) null
 );

@@ -12,7 +12,41 @@ public class ArticuloBusqueda{
 	private String extension;
 	private String categoriaPadre;
 	private Date dateModificate;
+	private String fechaExtencion;
+	private String peso;
 	
+	
+	
+	@Override
+	public String toString() {
+		return "ArticuloBusqueda [idArticulo=" + idArticulo + ", tituloArticulo=" + tituloArticulo + ", ulrArticulo="
+				+ ulrArticulo + ", descripcion=" + descripcion + ", fechaActualizacion=" + fechaActualizacion
+				+ ", extension=" + extension + ", categoriaPadre=" + categoriaPadre + ", dateModificate="
+				+ dateModificate + ", fechaExtencion=" + fechaExtencion + "]";
+	}
+	
+	
+
+	public String getPeso() {
+		return peso;
+	}
+
+
+
+	public void setPeso(String peso) {
+		this.peso = peso;
+	}
+
+
+
+	public String getFechaExtencion() {
+		return fechaExtencion;
+	}
+
+	public void setFechaExtencion(String fechaExtencion) {
+		this.fechaExtencion = fechaExtencion;
+	}
+
 	public String getCategoriaPadre() {
 		return categoriaPadre;
 	}

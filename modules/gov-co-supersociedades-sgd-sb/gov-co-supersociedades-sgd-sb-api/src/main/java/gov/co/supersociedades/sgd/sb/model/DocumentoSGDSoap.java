@@ -46,6 +46,7 @@ public class DocumentoSGDSoap implements Serializable {
 		soapModel.setTema(model.getTema());
 		soapModel.setEtiqueta(model.getEtiqueta());
 		soapModel.setPalabraClave(model.getPalabraClave());
+		soapModel.setNumRadicado(model.getNumRadicado());
 
 		return soapModel;
 	}
@@ -203,6 +204,14 @@ public class DocumentoSGDSoap implements Serializable {
 		_palabraClave = palabraClave;
 	}
 
+	public String getNumRadicado() {
+		return _numRadicado;
+	}
+
+	public void setNumRadicado(String numRadicado) {
+		_numRadicado = numRadicado;
+	}
+
 	private String _uuid;
 	private long _documentoId;
 	private String _nombre;
@@ -216,5 +225,6 @@ public class DocumentoSGDSoap implements Serializable {
 	private String _tema;
 	private String _etiqueta;
 	private String _palabraClave;
+	private String _numRadicado;
 
 }

@@ -6,6 +6,7 @@ String titulo = GetterUtil.getString(portletPreferences.getValue(Supersociedades
 String bajada = GetterUtil.getString(portletPreferences.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_BAJADA, StringPool.BLANK));
 String dlfile = GetterUtil.getString(portletPreferences.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_DLFILE, StringPool.BLANK));
 String journalArticle = GetterUtil.getString(portletPreferences.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_JA, StringPool.BLANK));
+String paginador = GetterUtil.getString(portletPreferences.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_PAGINADOR, StringPool.BLANK));
 %>
 
 <liferay-ui:error key="internal-error" message="internal-error" />
@@ -13,10 +14,14 @@ String journalArticle = GetterUtil.getString(portletPreferences.getValue(Superso
 
 <aui:form name="fm" action="<%=configurationURL%>" method="post">
 	<aui:fieldset>
-		<aui:input maxlength="20" name="titulo" value="<%=titulo%>" label="TITULO CATEGORIA"/>			
+		<aui:input maxlength="100" name="titulo" value="<%=titulo%>" label="TITULO CATEGORIA"/>			
 	</aui:fieldset>
 	<aui:fieldset>
-		<aui:input maxlength="100" name="bajada" value="<%=bajada%>" label="BAJADA BUSCADOR"/>
+		<aui:input maxlength="200" name="bajada" value="<%=bajada%>" label="BAJADA BUSCADOR"/>
+	</aui:fieldset>
+	
+	<aui:fieldset>
+		<aui:input type="10" name="paginador" value="<%=paginador%>" label="PAGINADOR"/>
 	</aui:fieldset>
 	
 	<aui:fieldset>

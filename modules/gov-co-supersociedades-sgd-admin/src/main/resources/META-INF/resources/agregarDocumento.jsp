@@ -1,40 +1,43 @@
-<div class="form">
+<%@ include file="init.jsp" %>
+
+<div class="form" id="formDocumento">
 	<h1>Ingresar Documento</h1>
 	
 	<div class="form-outline mb-2">
 		<label class="form-label" for="form3Example3">Nombre *</label>
-		<input type="text" id="nombre" class="form-control" placeholder="Nombre" name="nombre"/> 
-		<input id="urlPagina" type="hidden" name="urlPagina" value="${urlPagina}">
+		<input type="text" id="nombre" maxlength="200" class="form-control" placeholder="Nombre" name="nombre" value="${documento.nombre}"/> 
 	</div>
 	
 	<div class="form-outline mb-2">
 		<label class="form-label" for="epigrafe">Epígrafe *</label>
-		<textarea class="form-control" maxlength="200" cols="20" rows="3" id="epigrafe" placeholder="" name="epigrafe"></textarea>
+		<textarea class="form-control" maxlength="200" cols="20" rows="3" id="epigrafe" placeholder="" name="epigrafe" value="${documento.epigrafe}">
+			${documento.epigrafe}
+		</textarea>
 	</div>
 
 	<div class="form-outline mb-2">
 		<label class="form-label" for="noRadicado">Número de Radicado *</label> 
-		<input type="text" id="noRadicado" class="form-control" placeholder="No Radicado" name="noRadicado"/>
+		<input type="text" id="noRadicado" maxlength="200" class="form-control" placeholder="No Radicado" name="noRadicado" value="${documento.numRadicado}"/>
 	</div>
 
 	<div class="form-outline mb-2">
 		<label class="form-label" for="categoria">Categoría *</label>
-		<input type="text" id="categoria" class="form-control" name="categoria"/>
+		<input type="text" id="categoria" maxlength="200" class="form-control" name="categoria" value="${documento.categoria}"/>
 	</div>
 
 	<div class="form-outline mb-2">
 		<label class="form-label" for="tema">Tema*</label>
-		<input type="text" id="tema" class="form-control" name="tema"/>
+		<input type="text" id="tema" maxlength="200" class="form-control" name="tema" value="${documento.tema}"/>
 	</div>
 
 	<div class="form-outline mb-2">
 		<label class="form-label" for="etiqueta">Etiqueta*</label> 
-		<input type="text" id="etiqueta" class="form-control" name="etiqueta"/>
+		<input type="text" id="etiqueta" maxlength="200" class="form-control" name="etiqueta" value="${documento.etiqueta}"/>
 	</div>
 
 	<div class="form-outline mb-2">
 		<label class="form-label" for="palabraClave">Palabra clave*</label>
-		<input type="text" id="palabraClave" class="form-control" name="palabraClave"/>
+		<input type="text" id="palabraClave" maxlength="200" class="form-control" name="palabraClave" value="${documento.palabraClave}"/>
 	</div>
 	<br>
 
@@ -43,13 +46,13 @@
 		<div class="col-6">
 			<div class="form-outline">
 				<label class="form-label" for="fechapub">Inicio Publicación*</label> 
-				<input type="date" id="fechapub" class="form-control" placeholder=" " name="fechapub"/>
+				<input type="date" id="fechapub" class="form-control" placeholder="${documento.inicioPublicacion}" name="fechapub" value="${documento.inicioPublicacion}"/>
 			</div>
 		</div>
 		<div class="col-6">
 			<div class="form-outline">
 				<label class="form-label" for="fechafin">Fin Publicación*</label>
-				<input type="date" id="fechafin" class="form-control" placeholder=" " name="fechafin"/>
+				<input type="date" id="fechafin" class="form-control" placeholder="${documento.finPublicacion}" name="fechafin" value="${documento.finPublicacion}"/>
 			</div>
 		</div>
 	</div>
@@ -57,7 +60,7 @@
 	<br>
 	
 	<div class="alert alert-danger d-none" id="errorFormulario">
-  		Ingrese los datos del fromulario correctamente...
+  		Ingrese los datos del formulario correctamente...
 	</div>
 	
 	<div class="row mb-2">
@@ -68,7 +71,14 @@
 		</div>
 		<div class="col">
 			<div class="form-outline">
-				<button class="btn btn-primary btn-block mb-2" onclick="publicar();" id="btnPublicar">PUBLICAR</button>
+				<c:choose>
+					<c:when test="${actualizar}">
+						<button class="btn btn-primary btn-block mb-2" onclick="actualizar('${documento.documentoId}');" id="btnActualizar">ACTUALIZAR</button>
+					</c:when>
+					<c:otherwise>
+						<button class="btn btn-primary btn-block mb-2" onclick="enviarFormulario();" id="btnPublicar">PUBLICAR</button>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 	</div>

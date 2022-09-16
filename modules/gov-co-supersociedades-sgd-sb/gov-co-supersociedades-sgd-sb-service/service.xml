@@ -17,6 +17,7 @@
 		<column name="tema" type="String" />
 		<column name="etiqueta" type="String" />
 		<column name="palabraClave" type="String" />
+		<column name="numRadicado" type="String" />
 
 		<order by="desc">
 			<order-column name="createDate" />

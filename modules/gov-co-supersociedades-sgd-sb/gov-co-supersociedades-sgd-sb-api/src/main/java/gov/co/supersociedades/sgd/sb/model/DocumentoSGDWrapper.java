@@ -55,6 +55,7 @@ public class DocumentoSGDWrapper
 		attributes.put("tema", getTema());
 		attributes.put("etiqueta", getEtiqueta());
 		attributes.put("palabraClave", getPalabraClave());
+		attributes.put("numRadicado", getNumRadicado());
 
 		return attributes;
 	}
@@ -138,6 +139,12 @@ public class DocumentoSGDWrapper
 		if (palabraClave != null) {
 			setPalabraClave(palabraClave);
 		}
+
+		String numRadicado = (String)attributes.get("numRadicado");
+
+		if (numRadicado != null) {
+			setNumRadicado(numRadicado);
+		}
 	}
 
 	/**
@@ -218,6 +225,16 @@ public class DocumentoSGDWrapper
 	@Override
 	public String getNombre() {
 		return model.getNombre();
+	}
+
+	/**
+	 * Returns the num radicado of this documento sgd.
+	 *
+	 * @return the num radicado of this documento sgd
+	 */
+	@Override
+	public String getNumRadicado() {
+		return model.getNumRadicado();
 	}
 
 	/**
@@ -363,6 +380,16 @@ public class DocumentoSGDWrapper
 	@Override
 	public void setNombre(String nombre) {
 		model.setNombre(nombre);
+	}
+
+	/**
+	 * Sets the num radicado of this documento sgd.
+	 *
+	 * @param numRadicado the num radicado of this documento sgd
+	 */
+	@Override
+	public void setNumRadicado(String numRadicado) {
+		model.setNumRadicado(numRadicado);
 	}
 
 	/**

@@ -2,8 +2,13 @@ package gov.co.supersociedades.buscador.interno.utils;
 
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.string.StringPool;
@@ -23,6 +28,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +49,14 @@ public class BuscadorUtils {
 			String idArticle = doc.get(Field.ARTICLE_ID);
 			JournalArticle journalArticle = _journalArticleLocalService.getLatestArticle(td.getScopeGroupId(), idArticle);
 			if(Validator.isNotNull(journalArticle) && journalArticle.getIndexable()){
-				articulo.setTituloArticulo(journalArticle.getTitleCurrentValue());
+				articulo.setTituloArticulo(journalArticle.getTitle());
 				articulo.setIdArticulo(journalArticle.getArticleId());
 				articulo.setUlrArticulo(_querysUtils.getArticlePageURL(journalArticle, td));
 				articulo.setDescripcion(journalArticle.getDescription());
-				articulo.setFechaActualizacion(formatter.format(journalArticle.getModifiedDate()));
-				articulo.setDateModificate(journalArticle.getModifiedDate());
+				if(Validator.isNotNull(journalArticle.getModifiedDate())) {
+					articulo.setFechaActualizacion(formatter.format(journalArticle.getModifiedDate()));
+					articulo.setDateModificate(journalArticle.getModifiedDate());
+				}
 				articulo.setExtension("web");
 			}
 		} catch (Exception e) {
@@ -78,14 +86,47 @@ public class BuscadorUtils {
 					articulo.setTituloArticulo(summary.getTitle());
 					articulo.setDescripcion(fileEntry.getDescription());
 					articulo.setExtension(fileEntry.getExtension());
-					articulo.setFechaActualizacion(formatter.format(fileEntry.getModifiedDate()));
-					articulo.setDateModificate(fileEntry.getModifiedDate());
+					articulo.setFechaExtencion(getFechaMetaData(fileEntry, td));
+					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
+					if(Validator.isNotNull(fileEntry.getModifiedDate())) {
+						articulo.setFechaActualizacion(formatter.format(fileEntry.getModifiedDate()));
+					}
+					if(Validator.isNotNull(fileEntry.getModifiedDate())) {
+						articulo.setDateModificate(fileEntry.getModifiedDate());
+					}
 				}
 			}
 			
 			return articulo;
 		} catch (Exception e) {
 			_log.debug(e);
+			return null;
+		}
+	}
+	
+	public String getFechaMetaData(FileEntry file, ThemeDisplay td) {
+		String fecha = "";
+		try {
+			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
+					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
+			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
+
+				DDMFormValues ddmFormValues = StorageEngineManagerUtil
+						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
+				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
+				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
+					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
+						if (formfieldValue.getName().equalsIgnoreCase("Fecha1g84")) {
+							fecha = formfieldValue.getValue().getString(td.getLocale());
+
+						}
+					}
+				}
+
+			}
+
+			return formatter.format(fecha);
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -116,6 +157,14 @@ public class BuscadorUtils {
 	
 	public String getCategoryURL(HttpServletRequest httpReq) {
 		return ParamUtil.getString(httpReq, SupersociedadesBuscadorInternoPortletKeys.ID, StringPool.BLANK);
+	}
+	
+	public String getPaginator(HttpServletRequest httpReq, String paginator, String paginador) {
+		if(paginator.equalsIgnoreCase("end")) {
+			return ParamUtil.getString(httpReq, paginator, paginador);
+		}else {
+			return ParamUtil.getString(httpReq, paginator, "0");
+		}
 	}
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");

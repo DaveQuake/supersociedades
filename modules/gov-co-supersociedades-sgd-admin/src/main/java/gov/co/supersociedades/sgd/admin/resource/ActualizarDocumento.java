@@ -56,13 +56,13 @@ public class ActualizarDocumento extends BaseMVCResourceCommand{
 			
 			Date fechapub = ParamUtil.getDate(resourceRequest, "fechapub", SgdAdminPortletKeys.fechaHora);
 			Date fechaFin = ParamUtil.getDate(resourceRequest, "fechafin", SgdAdminPortletKeys.fechaHora);
-			String noRadicado = ParamUtil.getString(resourceRequest, "NoRadicado", "");
+			String noRadicado = ParamUtil.getString(resourceRequest, "noRadicado", "");
 			
 			String cifrado = _cifrado.cifrado(noRadicado, false, true);
 			String urlDocumento = cifrado+StringPool.UNDERLINE+noRadicado;
 
 			DocumentoSGD documentoSGD = _documentoSGDLocalService.getDocumentoSGD(Long.valueOf(documentId));
-
+			documentoSGD.setNumRadicado(noRadicado);
 			documentoSGD.setNombre(ParamUtil.getString(resourceRequest, "nombre", ""));
 			documentoSGD.setEpigrafe(ParamUtil.getString(resourceRequest, "epigrafe", ""));
 			documentoSGD.setUrlDocumento(urlDocumento);

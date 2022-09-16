@@ -71,7 +71,8 @@ public class DocumentoSGDModelImpl
 		{"finPublicacion", Types.TIMESTAMP}, {"epigrafe", Types.VARCHAR},
 		{"urlDocumento", Types.VARCHAR}, {"urlPagina", Types.VARCHAR},
 		{"categoria", Types.VARCHAR}, {"tema", Types.VARCHAR},
-		{"etiqueta", Types.VARCHAR}, {"palabraClave", Types.VARCHAR}
+		{"etiqueta", Types.VARCHAR}, {"palabraClave", Types.VARCHAR},
+		{"numRadicado", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -91,10 +92,11 @@ public class DocumentoSGDModelImpl
 		TABLE_COLUMNS_MAP.put("tema", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("etiqueta", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("palabraClave", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("numRadicado", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table gov_documento_sgd (uuid_ VARCHAR(75) null,documentoId LONG not null primary key,nombre VARCHAR(75) null,createDate DATE null,inicioPublicacion DATE null,finPublicacion DATE null,epigrafe VARCHAR(75) null,urlDocumento VARCHAR(75) null,urlPagina VARCHAR(75) null,categoria VARCHAR(75) null,tema VARCHAR(75) null,etiqueta VARCHAR(75) null,palabraClave VARCHAR(75) null)";
+		"create table gov_documento_sgd (uuid_ VARCHAR(75) null,documentoId LONG not null primary key,nombre VARCHAR(75) null,createDate DATE null,inicioPublicacion DATE null,finPublicacion DATE null,epigrafe VARCHAR(75) null,urlDocumento VARCHAR(75) null,urlPagina VARCHAR(75) null,categoria VARCHAR(75) null,tema VARCHAR(75) null,etiqueta VARCHAR(75) null,palabraClave VARCHAR(75) null,numRadicado VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP = "drop table gov_documento_sgd";
 
@@ -328,6 +330,11 @@ public class DocumentoSGDModelImpl
 		attributeSetterBiConsumers.put(
 			"palabraClave",
 			(BiConsumer<DocumentoSGD, String>)DocumentoSGD::setPalabraClave);
+		attributeGetterFunctions.put(
+			"numRadicado", DocumentoSGD::getNumRadicado);
+		attributeSetterBiConsumers.put(
+			"numRadicado",
+			(BiConsumer<DocumentoSGD, String>)DocumentoSGD::setNumRadicado);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -589,6 +596,25 @@ public class DocumentoSGDModelImpl
 		_palabraClave = palabraClave;
 	}
 
+	@Override
+	public String getNumRadicado() {
+		if (_numRadicado == null) {
+			return "";
+		}
+		else {
+			return _numRadicado;
+		}
+	}
+
+	@Override
+	public void setNumRadicado(String numRadicado) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_numRadicado = numRadicado;
+	}
+
 	public long getColumnBitmask() {
 		if (_columnBitmask > 0) {
 			return _columnBitmask;
@@ -656,6 +682,7 @@ public class DocumentoSGDModelImpl
 		documentoSGDImpl.setTema(getTema());
 		documentoSGDImpl.setEtiqueta(getEtiqueta());
 		documentoSGDImpl.setPalabraClave(getPalabraClave());
+		documentoSGDImpl.setNumRadicado(getNumRadicado());
 
 		documentoSGDImpl.resetOriginalValues();
 
@@ -837,6 +864,14 @@ public class DocumentoSGDModelImpl
 			documentoSGDCacheModel.palabraClave = null;
 		}
 
+		documentoSGDCacheModel.numRadicado = getNumRadicado();
+
+		String numRadicado = documentoSGDCacheModel.numRadicado;
+
+		if ((numRadicado != null) && (numRadicado.length() == 0)) {
+			documentoSGDCacheModel.numRadicado = null;
+		}
+
 		return documentoSGDCacheModel;
 	}
 
@@ -923,6 +958,7 @@ public class DocumentoSGDModelImpl
 	private String _tema;
 	private String _etiqueta;
 	private String _palabraClave;
+	private String _numRadicado;
 
 	public <T> T getColumnValue(String columnName) {
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
@@ -966,6 +1002,7 @@ public class DocumentoSGDModelImpl
 		_columnOriginalValues.put("tema", _tema);
 		_columnOriginalValues.put("etiqueta", _etiqueta);
 		_columnOriginalValues.put("palabraClave", _palabraClave);
+		_columnOriginalValues.put("numRadicado", _numRadicado);
 	}
 
 	private static final Map<String, String> _attributeNames;
@@ -1014,6 +1051,8 @@ public class DocumentoSGDModelImpl
 		columnBitmasks.put("etiqueta", 2048L);
 
 		columnBitmasks.put("palabraClave", 4096L);
+
+		columnBitmasks.put("numRadicado", 8192L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

@@ -63,7 +63,7 @@ public class DocumentoSGDCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -91,6 +91,8 @@ public class DocumentoSGDCacheModel
 		sb.append(etiqueta);
 		sb.append(", palabraClave=");
 		sb.append(palabraClave);
+		sb.append(", numRadicado=");
+		sb.append(numRadicado);
 		sb.append("}");
 
 		return sb.toString();
@@ -186,6 +188,13 @@ public class DocumentoSGDCacheModel
 			documentoSGDImpl.setPalabraClave(palabraClave);
 		}
 
+		if (numRadicado == null) {
+			documentoSGDImpl.setNumRadicado("");
+		}
+		else {
+			documentoSGDImpl.setNumRadicado(numRadicado);
+		}
+
 		documentoSGDImpl.resetOriginalValues();
 
 		return documentoSGDImpl;
@@ -207,6 +216,7 @@ public class DocumentoSGDCacheModel
 		tema = objectInput.readUTF();
 		etiqueta = objectInput.readUTF();
 		palabraClave = objectInput.readUTF();
+		numRadicado = objectInput.readUTF();
 	}
 
 	@Override
@@ -279,6 +289,13 @@ public class DocumentoSGDCacheModel
 		else {
 			objectOutput.writeUTF(palabraClave);
 		}
+
+		if (numRadicado == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(numRadicado);
+		}
 	}
 
 	public String uuid;
@@ -294,5 +311,6 @@ public class DocumentoSGDCacheModel
 	public String tema;
 	public String etiqueta;
 	public String palabraClave;
+	public String numRadicado;
 
 }

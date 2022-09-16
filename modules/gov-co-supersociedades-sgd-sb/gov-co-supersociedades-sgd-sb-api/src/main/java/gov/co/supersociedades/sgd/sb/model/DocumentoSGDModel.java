@@ -246,4 +246,19 @@ public interface DocumentoSGDModel extends BaseModel<DocumentoSGD> {
 	 */
 	public void setPalabraClave(String palabraClave);
 
+	/**
+	 * Returns the num radicado of this documento sgd.
+	 *
+	 * @return the num radicado of this documento sgd
+	 */
+	@AutoEscape
+	public String getNumRadicado();
+
+	/**
+	 * Sets the num radicado of this documento sgd.
+	 *
+	 * @param numRadicado the num radicado of this documento sgd
+	 */
+	public void setNumRadicado(String numRadicado);
+
 }

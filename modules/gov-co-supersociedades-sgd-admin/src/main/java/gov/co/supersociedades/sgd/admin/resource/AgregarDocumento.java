@@ -57,26 +57,26 @@ public class AgregarDocumento extends BaseMVCResourceCommand{
 		try {
 			Date fechapub = ParamUtil.getDate(resourceRequest, "fechapub", SgdAdminPortletKeys.fechaHora);
 			Date fechaFin = ParamUtil.getDate(resourceRequest, "fechafin", SgdAdminPortletKeys.fechaHora);
-			String noRadicado = ParamUtil.getString(resourceRequest, "NoRadicado", "");
+			String noRadicado = ParamUtil.getString(resourceRequest, "noRadicado", "");
 			
 			String cifrado = _cifrado.cifrado(noRadicado, false, true);
 			String urlDocumento = cifrado+StringPool.UNDERLINE+noRadicado;
 
-			DocumentoSGD reg = _documentoSGDLocalService.createDocumentoSGD(_counterLocalService.increment(DocumentoSGD.class.getName()));
+			DocumentoSGD documentoSGD = _documentoSGDLocalService.createDocumentoSGD(_counterLocalService.increment(DocumentoSGD.class.getName()));
+			documentoSGD.setNumRadicado(noRadicado);
+			documentoSGD.setNombre(ParamUtil.getString(resourceRequest, "nombre", ""));
+			documentoSGD.setEpigrafe(ParamUtil.getString(resourceRequest, "epigrafe", ""));
+			documentoSGD.setUrlDocumento(urlDocumento);
+			documentoSGD.setInicioPublicacion(fechapub);
+			documentoSGD.setFinPublicacion(fechaFin);
+			documentoSGD.setCreateDate(new Date());
+			documentoSGD.setUrlPagina(ParamUtil.getString(resourceRequest, "urlPagina", ""));
+			documentoSGD.setCategoria(ParamUtil.getString(resourceRequest, "categoria", ""));
+			documentoSGD.setTema(ParamUtil.getString(resourceRequest, "tema", ""));
+			documentoSGD.setEtiqueta(ParamUtil.getString(resourceRequest, "etiqueta", ""));
+			documentoSGD.setPalabraClave(ParamUtil.getString(resourceRequest, "palabraClave", ""));
 
-			reg.setNombre(ParamUtil.getString(resourceRequest, "nombre", ""));
-			reg.setEpigrafe(ParamUtil.getString(resourceRequest, "epigrafe", ""));
-			reg.setUrlDocumento(urlDocumento);
-			reg.setInicioPublicacion(fechapub);
-			reg.setFinPublicacion(fechaFin);
-			reg.setCreateDate(new Date());
-			reg.setUrlPagina(ParamUtil.getString(resourceRequest, "urlPagina", ""));
-			reg.setCategoria(ParamUtil.getString(resourceRequest, "categoria", ""));
-			reg.setTema(ParamUtil.getString(resourceRequest, "tema", ""));
-			reg.setEtiqueta(ParamUtil.getString(resourceRequest, "etiqueta", ""));
-			reg.setPalabraClave(ParamUtil.getString(resourceRequest, "palabraClave", ""));
-
-			_documentoSGDLocalService.addDocumentoSGD(reg);
+			_documentoSGDLocalService.addDocumentoSGD(documentoSGD);
 
 			jsonObject.put("status", "OK");
 			result.put(jsonObject);

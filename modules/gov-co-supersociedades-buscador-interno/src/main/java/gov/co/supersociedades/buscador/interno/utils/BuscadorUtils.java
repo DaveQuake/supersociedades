@@ -1,5 +1,6 @@
 package gov.co.supersociedades.buscador.interno.utils;
 
+import com.liferay.alloy.util.Constants;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
@@ -86,14 +87,23 @@ public class BuscadorUtils {
 					articulo.setTituloArticulo(summary.getTitle());
 					articulo.setDescripcion(fileEntry.getDescription());
 					articulo.setExtension(fileEntry.getExtension());
-					articulo.setFechaExtencion(getFechaMetaData(fileEntry, td));
+					String fechaExpedicion =getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
+					if(Validator.isNull(fechaExpedicion)) {
+						if(Validator.isNotNull(fileEntry.getModifiedDate())) {
+							fechaExpedicion = (formatter.format(fileEntry.getModifiedDate()));
+						}
+					}
+					articulo.setFechaExtencion(fechaExpedicion);
 					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
-					if(Validator.isNotNull(fileEntry.getModifiedDate())) {
-						articulo.setFechaActualizacion(formatter.format(fileEntry.getModifiedDate()));
+					
+					String fechaPublicacion =getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
+					if(Validator.isNull(fechaPublicacion)) {
+						if(Validator.isNotNull(fileEntry.getCreateDate())) {
+							fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
+						}
 					}
-					if(Validator.isNotNull(fileEntry.getModifiedDate())) {
-						articulo.setDateModificate(fileEntry.getModifiedDate());
-					}
+					articulo.setFechaActualizacion(fechaPublicacion);
+					articulo.setDateModificate(fileEntry.getCreateDate());
 				}
 			}
 			
@@ -104,7 +114,7 @@ public class BuscadorUtils {
 		}
 	}
 	
-	public String getFechaMetaData(FileEntry file, ThemeDisplay td) {
+	public String getFechaMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
 		String fecha = "";
 		try {
 			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
@@ -116,7 +126,7 @@ public class BuscadorUtils {
 				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
 				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
 					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
-						if (formfieldValue.getName().equalsIgnoreCase("Fecha1g84")) {
+						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
 							fecha = formfieldValue.getValue().getString(td.getLocale());
 
 						}
@@ -124,18 +134,26 @@ public class BuscadorUtils {
 				}
 
 			}
-
-			return formatter.format(fecha);
+			return generarFecha(fecha);
+			
 		} catch (Exception e) {
-			return null;
+			return "";
 		}
 	}
 	
 	public long getCategorias(HttpServletRequest httpReq, PortletPreferences prefs) {
-		String paramCategory = getCategoryURL(httpReq);
-		return (paramCategory.isEmpty()) 
-				? GetterUtil.getLong(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY, "0"))
-				: Long.parseLong(paramCategory);
+		String paramCategory = getCategoryURL(httpReq,prefs);
+		if(Validator.isNotNull(paramCategory)) {
+			return Long.parseLong(paramCategory);
+		}else {
+			if(Validator.isNotNull(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY_INICIAL, ""))) {
+				return GetterUtil.getLong(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY_INICIAL, "0"));
+			}else {
+				return  GetterUtil.getLong(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY, "0"));
+			}
+			
+		}
+		
 	}
 	
 	public AssetCategory getCategoria(long categoryId) {
@@ -155,8 +173,8 @@ public class BuscadorUtils {
 		return ParamUtil.getString(httpReq, SupersociedadesBuscadorInternoPortletKeys.KEYWORD, StringPool.BLANK);
 	}
 	
-	public String getCategoryURL(HttpServletRequest httpReq) {
-		return ParamUtil.getString(httpReq, SupersociedadesBuscadorInternoPortletKeys.ID, StringPool.BLANK);
+	public String getCategoryURL(HttpServletRequest httpReq, PortletPreferences prefs) {
+		return ParamUtil.getString(httpReq, SupersociedadesBuscadorInternoPortletKeys.ID, GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY_INICIAL, "0")));
 	}
 	
 	public String getPaginator(HttpServletRequest httpReq, String paginator, String paginador) {
@@ -165,6 +183,69 @@ public class BuscadorUtils {
 		}else {
 			return ParamUtil.getString(httpReq, paginator, "0");
 		}
+	}
+	
+	private String generarFecha(String fecha) {
+		String[] fechaSplit = fecha.split("-");
+		String mes = generarMes(fechaSplit[1]);
+
+		fecha = fechaSplit[2] + " " + mes + " " + fechaSplit[0];
+		return fecha;
+	}
+
+	private String generarMes(String mes) {
+		String mesString = "";
+
+		if (mes.equalsIgnoreCase("01") || mes.equalsIgnoreCase("1")) {
+			mesString = "Ene";
+		}
+
+		if (mes.equalsIgnoreCase("02") || mes.equalsIgnoreCase("2")) {
+			mesString = "Feb";
+		}
+
+		if (mes.equalsIgnoreCase("03") || mes.equalsIgnoreCase("3")) {
+			mesString = "Mar";
+		}
+
+		if (mes.equalsIgnoreCase("04") || mes.equalsIgnoreCase("4")) {
+			mesString = "Abr";
+		}
+
+		if (mes.equalsIgnoreCase("05") || mes.equalsIgnoreCase("5")) {
+			mesString = "May";
+		}
+
+		if (mes.equalsIgnoreCase("06") || mes.equalsIgnoreCase("6")) {
+			mesString = "Jun";
+		}
+
+		if (mes.equalsIgnoreCase("07") || mes.equalsIgnoreCase("7")) {
+			mesString = "Jul";
+		}
+
+		if (mes.equalsIgnoreCase("08") || mes.equalsIgnoreCase("8")) {
+			mesString = "Ago";
+		}
+
+		if (mes.equalsIgnoreCase("09") || mes.equalsIgnoreCase("9")) {
+			mesString = "Sep";
+		}
+
+		if (mes.equalsIgnoreCase("10")) {
+			mesString = "Oct";
+		}
+
+		if (mes.equalsIgnoreCase("11")) {
+			mesString = "Nov";
+		}
+
+		if (mes.equalsIgnoreCase("12")) {
+			mesString = "Dic";
+		}
+
+		return mesString;
+
 	}
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");

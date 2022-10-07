@@ -68,7 +68,7 @@ public class SupersociedadesBuscadorInterno extends MVCPortlet {
 		String keyword = _buscadorUtils.getKeywordURL(httpReq);
 		renderRequest.setAttribute("keyword", keyword);
 		
-		String category = _buscadorUtils.getCategoryURL(httpReq);
+		String category = _buscadorUtils.getCategoryURL(httpReq,prefs);
 		renderRequest.setAttribute("category", category);
 		
 		String start = _buscadorUtils.getPaginator(httpReq, "start", paginador);
@@ -78,12 +78,13 @@ public class SupersociedadesBuscadorInterno extends MVCPortlet {
 		renderRequest.setAttribute("end", Integer.parseInt(end));
 		
 		long[] categoria = {_buscadorUtils.getCategorias(httpReq, prefs)};
+		renderRequest.setAttribute("catBuscada", categoria[0]);
 		long categoryDefault = GetterUtil.getLong(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY, "0"));
 		
 		boolean isDlFile = GetterUtil.getBoolean(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_DLFILE, StringPool.FALSE));
 		boolean isJournalArticle = GetterUtil.getBoolean(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_JA, StringPool.FALSE));
 
-		renderRequest.setAttribute("listaArticulos", _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle, start, end, true));
+		renderRequest.setAttribute("listaArticulos", _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle, start, end, true,prefs));
 		renderRequest.setAttribute("totalArticulos", _buscadorHelper.getCountByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle));
 		renderRequest.setAttribute("listaCategorias", _buscadorHelper.getCountsByCategory(renderRequest, keyword, categoryDefault, isDlFile, isJournalArticle));
 		

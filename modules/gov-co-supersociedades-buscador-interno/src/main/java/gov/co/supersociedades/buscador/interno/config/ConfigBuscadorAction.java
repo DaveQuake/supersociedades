@@ -33,6 +33,7 @@ public class ConfigBuscadorAction extends DefaultConfigurationAction {
 		
 		try {
 			String idCategory = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY);
+			String idCategoryInicial = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_ID_CATEGORY_INICIAL);
 			String titulo = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_TITULO);
 			String bajada = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_BAJADA);
 			String dlfile = ParamUtil.getString(actionRequest, SupersociedadesBuscadorInternoPortletKeys.CONFIG_DLFILE);
@@ -41,6 +42,7 @@ public class ConfigBuscadorAction extends DefaultConfigurationAction {
 
 			PortletPreferences prefs = actionRequest.getPreferences();
 			prefs.setValue("idCategory", idCategory);
+			prefs.setValue("idCategoryInicial", idCategoryInicial);
 			prefs.setValue("titulo", titulo);
 			prefs.setValue("bajada", bajada);
 			prefs.setValue("dlfile", dlfile);

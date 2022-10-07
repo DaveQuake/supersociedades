@@ -12,4 +12,8 @@ public class Constantes {
 	public static final String PORTLET_PREFERENCIAS = "regPrefs";
 	public static final String ID_CARPETA="idCarpeta";
 	public static final String TITULO="titulo";
+	public static final String FECHA_PUBLICACION = "Fecha1g84";
+	public static final String FECHA_EXPEDICION = "FechaExpedicionGlobal";
+	
+	
 }

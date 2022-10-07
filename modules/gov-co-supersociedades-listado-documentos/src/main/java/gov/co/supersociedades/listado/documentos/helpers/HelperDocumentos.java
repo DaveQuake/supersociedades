@@ -1,44 +1,26 @@
 package gov.co.supersociedades.listado.documentos.helpers;
 
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
-import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServiceUtil;
-import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil;
-import com.liferay.document.library.kernel.service.DLFileVersionLocalServiceUtil;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
-import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.Node;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
 
-import java.io.Serializable;
-import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
@@ -59,6 +41,7 @@ public class HelperDocumentos {
 	private static final Log _log = LogFactoryUtil.getLog(HelperDocumentos.class);
 	private volatile ListadoConfiguration _listadoConfig;
 	private String PATRON = "dd-MM-yyyy";
+	private static SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 
 	@Activate
 	@Modified
@@ -95,14 +78,19 @@ public class HelperDocumentos {
 			}
 		}
 		List<ListadoDocumentos> listaOrdenada = new ArrayList(listadoDoc);
-		if (listadoDoc.get(0).getNombreListado().contains("20")) {
+		if(listadoDoc.size() > 0) {
+			if (listadoDoc.get(0).getNombreListado().contains("20")) {
 
-			Collections.sort(listaOrdenada, compareByFechaCreacion);
-			return listaOrdenada;
-		} else {
-			Collections.sort(listaOrdenada, compareName);
+				Collections.sort(listaOrdenada, compareByFechaCreacion);
+				return listaOrdenada;
+			} else {
+				Collections.sort(listaOrdenada, compareName);
+				return listaOrdenada;
+			}
+		}else {
 			return listaOrdenada;
 		}
+		
 
 	}
 
@@ -119,14 +107,29 @@ public class HelperDocumentos {
 					doc.setNombreDocumento(files.getTitle());
 					doc.setDescripcion(files.getDescription());
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATRON);
-					doc.setExtencion(files.getExtension());
-					String date = simpleDateFormat.format(files.getModifiedDate());
-					doc.setFecha(generarFecha(date));
+					String extencion = files.getExtension();
+					if(extencion.contains(".")) {
+						extencion= files.getExtension().split(".")[0];
+					}
+					doc.setExtencion(extencion);
+					String date = getFechaMetaData(files, td, Constantes.FECHA_PUBLICACION);
+					if(Validator.isNull(date)) {
+						if(Validator.isNotNull(files.getCreateDate())) {
+							date = (formatter.format(files.getCreateDate()));
+						}
+					}
+					
+					doc.setFecha(date);
 					doc.setUrlDocumento(url);
-					doc.setFechaExpedicion(getFechaMetaData(files, td));
+					String fechaExpedicion =getFechaMetaData(files, td, Constantes.FECHA_EXPEDICION);
+					if(Validator.isNull(fechaExpedicion)) {
+						if(Validator.isNotNull(files.getModifiedDate())) {
+							fechaExpedicion = (formatter.format(files.getModifiedDate()));
+						}
+					}
+					doc.setFechaExpedicion(fechaExpedicion);
 					doc.setPeso(String.valueOf(files.getSize() / 1000));
 					listDoc.add(doc);
-					getFechaMetaData(files, td);
 				} catch (Exception e) {
 					continue;
 				}
@@ -137,18 +140,19 @@ public class HelperDocumentos {
 		return listado;
 	}
 
-	public String getFechaMetaData(FileEntry file, ThemeDisplay td) {
+	public String getFechaMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
 		String fecha = "";
 		try {
 			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
 					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
 			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
-				
-				DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
+
+				DDMFormValues ddmFormValues = StorageEngineManagerUtil
+						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
 				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
 				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
 					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
-						if (formfieldValue.getName().equalsIgnoreCase("Fecha1g84")) {
+						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
 							fecha = formfieldValue.getValue().getString(td.getLocale());
 
 						}
@@ -156,13 +160,13 @@ public class HelperDocumentos {
 				}
 
 			}
-
-			return generarFecha(fecha);
+			return generarFechaMetadata(fecha);
+			
 		} catch (Exception e) {
-			return null;
+			return "";
 		}
 	}
-
+	
 	public void generarTitulo(PortletRequest request) {
 		request.setAttribute("titulo", _listadoConfig.titulo());
 	}
@@ -172,6 +176,14 @@ public class HelperDocumentos {
 		String mes = generarMes(fechaSplit[1]);
 
 		fecha = mes + ". " + fechaSplit[0] + ", " + fechaSplit[2];
+		return fecha;
+	}
+	
+	private String generarFechaMetadata(String fecha) {
+		String[] fechaSplit = fecha.split("-");
+		String mes = generarMes(fechaSplit[1]);
+
+		fecha = fechaSplit[2] + " " + mes + " " + fechaSplit[0];
 		return fecha;
 	}
 
@@ -235,8 +247,8 @@ public class HelperDocumentos {
 		@Override
 		public int compare(ListadoDocumentos documentoUno, ListadoDocumentos documentoDos) {
 
-			Long tituloUno = Long.parseLong(documentoUno.getNombreListado());
-			Long tituloDos = Long.parseLong(documentoDos.getNombreListado());
+			Long tituloUno = Long.parseLong(documentoUno.getNombreListado().replaceAll("\\D+",""));
+			Long tituloDos = Long.parseLong(documentoDos.getNombreListado().replaceAll("\\D+",""));
 
 			int compareValue = tituloUno.compareTo(tituloDos);
 

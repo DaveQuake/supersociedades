@@ -44,19 +44,19 @@ public class SearchContextHelper {
 		searchContext.setCompanyId(td.getCompanyId());
 		
 		boolean desc = true;
-		Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.MODIFIED_DATE),Sort.LONG_TYPE, desc);
-		Sort[] sorts = new Sort[] {new Sort(Field.MODIFIED_DATE, true)};
+		Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.PUBLISH_DATE),Sort.LONG_TYPE, desc);
+		Sort[] sorts = new Sort[] {new Sort(Field.PUBLISH_DATE, true)};
 		searchContext.setSorts(sorts);
 		searchContext.setScopeStrict(true);
 		searchContext.setAttribute("head", Boolean.TRUE);
 		searchContext.setAttribute("latest", Boolean.TRUE);
 		
-		if(pagination) {
-			if(Validator.isNotNull(start) && Validator.isNotNull(end)) {
-				searchContext.setStart(Integer.parseInt(start));
-				searchContext.setEnd(Integer.parseInt(end));
-			}
-		}
+//		if(pagination) {
+//			if(Validator.isNotNull(start) && Validator.isNotNull(end)) {
+//				searchContext.setStart(Integer.parseInt(start));
+//				searchContext.setEnd(Integer.parseInt(end));
+//			}
+//		}
 		
 		return searchContext;
 	}
@@ -67,7 +67,6 @@ public class SearchContextHelper {
 		SearchContext searchContext =  new SearchContext();
 		
 		if(Validator.isNotNull(keyword)) {
-			keyword = StringPool.QUOTE + keyword + StringPool.QUOTE;
 			searchContext.setKeywords(keyword);
 		}else {
 			searchContext.setAttribute("search.empty.search", Boolean.TRUE);

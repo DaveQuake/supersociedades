@@ -28,7 +28,6 @@
 																	<td>
 																		<c:set var="tipo" value="${documento.nombreDocumento}"/>
 																		<c:set var="office" value="false"/>
-																		
 																		<c:if test="${documento.extencion eq 'pdf'}">
 																			<img class="img-modal" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}" src="<%=request.getContextPath()%>/imagenes/pdf-svgrepo-com.svg" align="center">
 																		</c:if>
@@ -36,7 +35,7 @@
 																			<img class="img-modal" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}" src="<%=request.getContextPath()%>/imagenes/word-svgrepo-com.svg" align="center">
 																			<c:set var="office" value="true"/>
 																		</c:if>
-																		<c:if test="${documento.extencion eq 'xlsx' or articulo.extension eq 'csv' or articulo.extension eq 'xls' or fn:contains(tipo, '.xls')}">
+																		<c:if test="${documento.extencion eq 'xlsx' or documento.extencion eq 'csv' or documento.extencion eq 'xls' }">
 																			<img class="img-modal" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}" src="<%=request.getContextPath()%>/imagenes/microsoft-excel-2013-logo-svgrepo-com.svg" align="center">
 																			<c:set var="office" value="true"/>
 																		</c:if>
@@ -64,6 +63,7 @@
 															<tbody>
 																<tr>
 																	<td class="titulo">
+																	<div class="w-100">
 																		<c:choose>
 																			<c:when test="${not empty documento.urlDocumento and office}">
 																				<a href="${documento.urlDocumento}" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}">
@@ -74,19 +74,28 @@
 																				<a href="${documento.urlDocumento}" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}"><span class="titulo_doc">${documento.nombreDocumento}</span></a>
 																			</c:otherwise>
 																		</c:choose>
+																	</div>	
+																		
 																	</td>
 																	<%-- <td class="fecha-modal">${documento.fecha}</td> --%>
 																</tr>
+																
+																 <tr >
+																	
+																	<td colspan="2" style="font-size: 14px;">
+																		<div class="w-40">
+																			<span>${fn:substring(documento.descripcion, 0, 220)}</span>
+																		</div>
+																	</td>
+																</tr> 
 																<tr>
 																	<td>
-																		<span class="text-info" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}">Publicaci&oacute;n: ${documento.fecha} <c:if test="${documento.fechaExpedicion != null}">| Expedici&oacute;n ${documento.fechaExpedicion}</c:if></span>
+																		
+																			<span class="text-info" title="${documento.nombreDocumento}" alt="${documento.nombreDocumento}">Publicaci&oacute;n: ${documento.fecha} <c:if test="${documento.fechaExpedicion != null}">| Expedici&oacute;n ${documento.fechaExpedicion}</c:if></span>
+																																		
 																	</td>
-																	<%-- <td colspan="2">${documento.descripcion}</td> --%>
-																</tr>
-																<%-- <tr class="txt-justificado">
-																	
-																	<td colspan="2">${documento.descripcion}</td>
-																</tr> --%>
+				
+																</tr> 
 															</tbody>
 														</table>
 													</td>
@@ -117,8 +126,22 @@
     padding-top: 0,5rem;
     transition: all 100ms ease;
     text-decoration: none !important;
-
+	padding-left: 0;
 }
+
+
+@media ( max-width : 768px) {
+	.w-100{
+		width: 100%;
+	}
+	.w-40{
+		width: 40%;
+	}
+	.w-58{
+		width: 58% !important;
+	}
+}
+
 </style>
 
 <script>

@@ -134,12 +134,40 @@ public class HelperDocumentos {
 					continue;
 				}
 			}
-			listado.setDocumentos(listDoc);
+			List<Documento> listaOrdenada = new ArrayList(listDoc);
+			Collections.sort(listaOrdenada ,compareByFechaCreacionDocumento);
+			listado.setDocumentos(listaOrdenada);
 		}
-
+		
+		
 		return listado;
 	}
 
+	public Comparator<Documento> compareByFechaCreacionDocumento = new Comparator<Documento>() {
+
+		@Override
+		public int compare(Documento documentoUno, Documento documentoDos) {
+
+			String tituloUno = documentoUno.getFechaExpedicion();
+			String tituloDos = documentoDos.getFechaExpedicion();
+			if(tituloUno == tituloDos) {
+				tituloUno = documentoUno.getNombreDocumento();
+				tituloDos = documentoDos.getNombreDocumento();
+			}
+			int compareValue = tituloUno.compareTo(tituloDos);
+
+			if (compareValue == 0) {
+				return 0;
+			} else if (compareValue > 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+
+	};
+
+	
 	public String getFechaMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
 		String fecha = "";
 		try {

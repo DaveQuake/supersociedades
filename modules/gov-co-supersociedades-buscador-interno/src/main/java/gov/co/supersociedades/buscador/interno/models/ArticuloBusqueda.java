@@ -1,8 +1,9 @@
 package gov.co.supersociedades.buscador.interno.models;
 
+import java.util.Comparator;
 import java.util.Date;
 
-public class ArticuloBusqueda{
+public class ArticuloBusqueda implements Comparator<ArticuloBusqueda>{
 
 	private String idArticulo;
 	private String tituloArticulo;
@@ -10,11 +11,17 @@ public class ArticuloBusqueda{
 	private String descripcion;
 	private String fechaActualizacion;
 	private String extension;
+	private Date dateCompare;
 	private String categoriaPadre;
 	private Date dateModificate;
 	private String fechaExtencion;
 	private String peso;
+	private String urlExterna;
 	
+	@Override
+	public int compare(ArticuloBusqueda o1, ArticuloBusqueda o2) {
+		return o2.getDateCompare().compareTo(o1.getDateCompare());
+	}
 	
 	
 	@Override
@@ -26,6 +33,28 @@ public class ArticuloBusqueda{
 	}
 	
 	
+	
+	public String getUrlExterna() {
+		return urlExterna;
+	}
+
+
+	public void setUrlExterna(String urlExterna) {
+		this.urlExterna = urlExterna;
+	}
+
+
+	public Date getDateCompare() {
+		return dateCompare;
+	}
+
+
+
+	public void setDateCompare(Date dateCompare) {
+		this.dateCompare = dateCompare;
+	}
+
+
 
 	public String getPeso() {
 		return peso;

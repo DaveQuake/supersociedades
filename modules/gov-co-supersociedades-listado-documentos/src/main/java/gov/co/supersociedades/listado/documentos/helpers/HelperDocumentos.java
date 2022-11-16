@@ -122,11 +122,13 @@ public class HelperDocumentos {
 					doc.setFecha(date);
 					doc.setUrlDocumento(url);
 					String fechaExpedicion =getFechaMetaData(files, td, Constantes.FECHA_EXPEDICION);
+					String urlExterna = getFechaMetaData(files, td, Constantes.URL_ENLACE_OTRA_PAG);
 					if(Validator.isNull(fechaExpedicion)) {
 						if(Validator.isNotNull(files.getModifiedDate())) {
 							fechaExpedicion = (formatter.format(files.getModifiedDate()));
 						}
 					}
+					doc.setUrlExterna(urlExterna);
 					doc.setFechaExpedicion(fechaExpedicion);
 					doc.setPeso(String.valueOf(files.getSize() / 1000));
 					listDoc.add(doc);
@@ -189,6 +191,33 @@ public class HelperDocumentos {
 
 			}
 			return generarFechaMetadata(fecha);
+			
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
+	public String getStringMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
+		String data = "";
+		try {
+			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
+					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
+			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
+
+				DDMFormValues ddmFormValues = StorageEngineManagerUtil
+						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
+				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
+				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
+					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
+						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
+							data = formfieldValue.getValue().getString(td.getLocale());
+
+						}
+					}
+				}
+
+			}
+			return data;
 			
 		} catch (Exception e) {
 			return "";

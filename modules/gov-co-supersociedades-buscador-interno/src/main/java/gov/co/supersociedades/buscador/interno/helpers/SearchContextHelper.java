@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate=true, service=SearchContextHelper.class)
 public class SearchContextHelper {
 	
-	public SearchContext getSearchContext(ThemeDisplay td, String keyword, long[] parentCategoryIds, int tipo, String start, String end, boolean pagination){
+	public SearchContext getSearchContext(ThemeDisplay td, String keyword, long[] parentCategoryIds, int tipo, String start, String end, boolean pagination, String categoryFiltro){
 		long[] groupIds = {td.getScopeGroupId()};
 		
 		SearchContext searchContext =  new SearchContext();
@@ -44,19 +44,28 @@ public class SearchContextHelper {
 		searchContext.setCompanyId(td.getCompanyId());
 		
 		boolean desc = true;
-		Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.PUBLISH_DATE),Sort.LONG_TYPE, desc);
-		Sort[] sorts = new Sort[] {new Sort(Field.PUBLISH_DATE, true)};
-		searchContext.setSorts(sorts);
+		
+		if(categoryFiltro.equals("1256470")) {
+			Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.TITLE),Sort.STRING_TYPE, desc);
+			Sort[] sorts = new Sort[] {new Sort(Field.TITLE, false)};
+			searchContext.setSorts(sorts);
+		}else {
+			Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.CREATE_DATE),Sort.LONG_TYPE, desc);
+			Sort[] sorts = new Sort[] {new Sort(Field.CREATE_DATE, false)};
+			searchContext.setSorts(sorts);
+		}
+		
+		
 		searchContext.setScopeStrict(true);
 		searchContext.setAttribute("head", Boolean.TRUE);
 		searchContext.setAttribute("latest", Boolean.TRUE);
 		
-//		if(pagination) {
-//			if(Validator.isNotNull(start) && Validator.isNotNull(end)) {
-//				searchContext.setStart(Integer.parseInt(start));
-//				searchContext.setEnd(Integer.parseInt(end));
-//			}
-//		}
+		if(pagination) {
+			if(Validator.isNotNull(start) && Validator.isNotNull(end)) {
+				searchContext.setStart(Integer.parseInt(start));
+				searchContext.setEnd(Integer.parseInt(end));
+			}
+		}
 		
 		return searchContext;
 	}

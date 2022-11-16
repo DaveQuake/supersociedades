@@ -38,6 +38,7 @@
 			<c:forEach items="${listaCategorias}" var="categoria">
 				<div class="col-sd-4 mb-2 " style="cursor: pointer; max-width: 157.78px; min-width: 157.78px; margin-left: 10px; ">
 					<span style="display: block;" id="cat_${categoria.category.categoryId}" class="boton-categorias" onclick="findByCategory('${categoria.category.categoryId}');" title="${categoria.category.name}" alt="${categoria.category.name}">${categoria.category.name} (${categoria.contador})</span>
+					<input type="hidden" id="cont_${categoria.category.categoryId}" val="${categoria.contador}">
 				</div>
 			</c:forEach>
 		</div>
@@ -108,6 +109,13 @@
 												</td>
 											</tr>
 										</c:if>
+										<c:if test="${not empty articulo.urlExterna}">
+											<tr>
+												<td>
+													<span title="Enlace externo"  class="text-info-data" style="cursor: pointer; border-bottom: solid 1px; color: #007bff !important;" onclick="openUrlExterna('${articulo.urlExterna}');">Enlace Externo</span>
+												</td>
+											</tr>
+										</c:if>
 										<c:if test="${not empty articulo.fechaActualizacion}">
 											<tr>
 												<td>
@@ -127,6 +135,7 @@
 				<hr>
 			</c:forEach>
 			<div class="paginationGroup">
+			<span title="Total resultado" class="text-info-data mr-5" style="padding-top: 10px;">Total Resultado: ${totalArticulos}</span>
 				<ul class="pagination row p-0 m-0">
 					<c:if test="${start > 0}">
 						<li class="page-item col-1 p-0 m-0" style="max-width: max-content;"><span style="cursor: pointer;" class="action-paginador" onclick="anterior();">Anterior</span></li>
@@ -158,6 +167,12 @@
 	var start = '${start}';
 	var end = '${end}';
 	var paginador = '${paginador}';
+	var totalArticulos = '${totalArticulos}';
+	var listaCategorias = '${listaCategorias}';
+	var orden = '${orden}';
+	function openUrlExterna(url){
+		window.open(url, '_blank');
+	}
 	
 	function num_Pagination(pag){
 		$("#cargando").show();

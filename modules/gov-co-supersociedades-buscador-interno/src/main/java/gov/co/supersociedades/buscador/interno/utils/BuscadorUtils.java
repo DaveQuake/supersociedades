@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.portlet.PortletPreferences;
@@ -87,16 +88,21 @@ public class BuscadorUtils {
 					articulo.setTituloArticulo(summary.getTitle());
 					articulo.setDescripcion(fileEntry.getDescription());
 					articulo.setExtension(fileEntry.getExtension());
-					String fechaExpedicion =getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
+					String fechaExpedicion = getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
+					Date fechaExpedicionCompare =getFechaMetaDataCompare(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
 					if(Validator.isNull(fechaExpedicion)) {
 						if(Validator.isNotNull(fileEntry.getModifiedDate())) {
 							fechaExpedicion = (formatter.format(fileEntry.getModifiedDate()));
+							fechaExpedicionCompare = fileEntry.getModifiedDate();
 						}
 					}
+					articulo.setDateCompare(fechaExpedicionCompare);					
 					articulo.setFechaExtencion(fechaExpedicion);
 					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
 					
 					String fechaPublicacion =getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
+					String urlExterna =getStringMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
+					articulo.setUrlExterna(urlExterna);
 					if(Validator.isNull(fechaPublicacion)) {
 						if(Validator.isNotNull(fileEntry.getCreateDate())) {
 							fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
@@ -138,6 +144,66 @@ public class BuscadorUtils {
 			
 		} catch (Exception e) {
 			return "";
+		}
+	}
+	public Date getFechaMetaDataCompare(FileEntry file, ThemeDisplay td, String nombreCampo) {
+		String fecha = "";
+		try {
+			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
+					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
+			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
+				
+				DDMFormValues ddmFormValues = StorageEngineManagerUtil
+						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
+				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
+				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
+					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
+						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
+							fecha = formfieldValue.getValue().getString(td.getLocale());
+							
+						}
+					}
+				}
+				
+			}
+			return formatterDos.parse(fecha);
+			
+		} catch (Exception e) {
+			if(Validator.isNotNull(file.getModifiedDate())) {
+				return file.getModifiedDate();
+			}else {
+				return file.getCreateDate();
+			}
+		}
+	}
+	public String getStringMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
+		String data = "";
+		try {
+			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
+					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
+			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
+				
+				DDMFormValues ddmFormValues = StorageEngineManagerUtil
+						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
+				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
+				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
+					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
+						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
+							data = formfieldValue.getValue().getString(td.getLocale());
+							
+						}
+					}
+				}
+				
+			}
+			return data;
+			
+		} catch (Exception e) {
+			if(Validator.isNotNull(file.getModifiedDate())) {
+				return "";
+			}else {
+				return "";
+			}
 		}
 	}
 	
@@ -249,6 +315,7 @@ public class BuscadorUtils {
 	}
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+	private static SimpleDateFormat formatterDos = new SimpleDateFormat("yyyy-MM-dd");
 	private static final Log _log = LogFactoryUtil.getLog(BuscadorUtils.class);
 	
 	@Reference

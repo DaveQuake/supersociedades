@@ -27,6 +27,7 @@ import org.osgi.service.component.annotations.Reference;
 import gov.co.supersociedades.buscador.interno.constants.SupersociedadesBuscadorInternoPortletKeys;
 import gov.co.supersociedades.buscador.interno.helpers.BuscadorHelper;
 import gov.co.supersociedades.buscador.interno.models.ArticuloBusqueda;
+import gov.co.supersociedades.buscador.interno.models.ContadorCategorias;
 import gov.co.supersociedades.buscador.interno.utils.BuscadorUtils;
 
 /**
@@ -84,9 +85,16 @@ public class SupersociedadesBuscadorInterno extends MVCPortlet {
 		boolean isDlFile = GetterUtil.getBoolean(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_DLFILE, StringPool.FALSE));
 		boolean isJournalArticle = GetterUtil.getBoolean(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_JA, StringPool.FALSE));
 
-		renderRequest.setAttribute("listaArticulos", _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle, start, end, true,prefs));
-		renderRequest.setAttribute("totalArticulos", _buscadorHelper.getCountByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle));
-		renderRequest.setAttribute("listaCategorias", _buscadorHelper.getCountsByCategory(renderRequest, keyword, categoryDefault, isDlFile, isJournalArticle));
+		renderRequest.setAttribute("listaArticulos", _buscadorHelper.searchByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle, start, end, true,prefs, category));
+		int totalArticulos = _buscadorHelper.getCountByCategory(renderRequest, keyword, categoria, isDlFile, isJournalArticle,"");
+		renderRequest.setAttribute("totalArticulos", totalArticulos);
+		List<ContadorCategorias> listaCategorias = _buscadorHelper.getCountsByCategory(renderRequest, keyword, categoryDefault, isDlFile, isJournalArticle,prefs,category);
+		renderRequest.setAttribute("listaCategorias", listaCategorias);
+		
+		if(listaCategorias.size() < 1) {
+			int resultPag =Integer.parseInt(GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_PAGINADOR, "20")));
+			renderRequest.setAttribute("totalPag", _buscadorHelper.getCantPag(totalArticulos, resultPag));
+		}
 		
 		super.doView(renderRequest, renderResponse);
 	}

@@ -317,7 +317,10 @@ function redirect_files(url_dtn){
 			  }
 		);
 
-	}else{
+	}else if( url_dtn.includes("youtube.com") ){
+		window.open(url_dtn, '_blank');
+		//window.location.href = url_dtn;
+	}else {
 		//window.open(url_dtn, '_blank');
 		window.location.href = url_dtn;
 	}

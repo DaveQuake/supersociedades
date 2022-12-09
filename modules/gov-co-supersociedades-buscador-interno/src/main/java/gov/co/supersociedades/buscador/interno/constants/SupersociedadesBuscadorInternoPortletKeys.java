@@ -19,6 +19,7 @@ public class SupersociedadesBuscadorInternoPortletKeys {
 	public static final String CONFIG_JA = "journalArticle";
 	public static final String CONFIG_PAGINADOR = "paginador";
 	public static final String FECHA_PUBLICACION = "Fecha1g84";
+	public static final String URL_ENLACE_OTRA_PAG = "URLEnlaceDePublicacionAOtraPagina";
 	public static final String FECHA_EXPEDICION = "FechaExpedicionGlobal";
 
 	

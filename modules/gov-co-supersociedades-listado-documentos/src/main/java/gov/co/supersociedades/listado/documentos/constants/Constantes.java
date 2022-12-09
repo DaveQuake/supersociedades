@@ -14,6 +14,7 @@ public class Constantes {
 	public static final String TITULO="titulo";
 	public static final String FECHA_PUBLICACION = "Fecha1g84";
 	public static final String FECHA_EXPEDICION = "FechaExpedicionGlobal";
+	public static final String URL_ENLACE_OTRA_PAG = "URLEnlaceDePublicacionAOtraPagina";
 	
 	
 }

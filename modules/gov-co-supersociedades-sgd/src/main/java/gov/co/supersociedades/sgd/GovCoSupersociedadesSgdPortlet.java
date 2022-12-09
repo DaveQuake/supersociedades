@@ -62,7 +62,9 @@ public class GovCoSupersociedadesSgdPortlet extends MVCPortlet {
 		renderRequest.setAttribute("urlExterna", UrlVisorDocumentoSGD);
 		
 		String urlPagina = PortalUtil.getCurrentURL(renderRequest);
-		
+		if(urlPagina.contains("es")) {
+			urlPagina = urlPagina.replace("es/", "");
+		}
 		List<DocumentoSGD> listaDocumentos = _documentoSGDLocalService.findByUrlPagina(urlPagina);
 		List<DocumentoSGD> listaFiltrada = new ArrayList<DocumentoSGD>();
 		for (int i = 0; i < listaDocumentos.size(); i++) {

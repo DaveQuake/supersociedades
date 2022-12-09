@@ -9,8 +9,17 @@ public class Documento {
 	private String extencion;
 	private String fechaExpedicion;
 	private String peso;
+	private String urlExterna;
 	
 	
+	
+	public String getUrlExterna() {
+		return urlExterna;
+	}
+
+	public void setUrlExterna(String urlExterna) {
+		this.urlExterna = urlExterna;
+	}
 
 	public String getPeso() {
 		return peso;

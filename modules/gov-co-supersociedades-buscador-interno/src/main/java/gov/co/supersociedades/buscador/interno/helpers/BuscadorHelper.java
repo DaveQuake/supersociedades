@@ -4,9 +4,7 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
@@ -27,7 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.PortletPreferences;
@@ -53,34 +50,31 @@ public class BuscadorHelper {
 
 	public List<ArticuloBusqueda> searchByCategory(RenderRequest renderRequest, String keyword, long[] categoria,
 			boolean isDlFile, boolean isJournalArticle, String start, String end, boolean pagination,
-			PortletPreferences prefs) {
+			PortletPreferences prefs, String categoriaFiltro) {
 		List<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>();
 
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		int tipo = getTipo(isDlFile, isJournalArticle);
 		SearchContext searchContext = _searchContextHelper.getSearchContext(td, keyword, categoria, tipo, start, end,
-				pagination);
+				pagination,categoriaFiltro);
 
 		try {
 			FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
 
 			Hits hits = facetedSearcher.search(searchContext);
 			List<Document> docs = hits.toList();
-			List<Document> docsSubList = new ArrayList<Document>();
-			Collections.sort(docs, sortDocument);
-			int resultPag =Integer.parseInt(GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_PAGINADOR, "20")));
-			renderRequest.setAttribute("totalPag", getCantPag(docs.size(), resultPag));
+			
 			if (Validator.isNotNull(docs)) {
 				
 				if(Integer.parseInt(end) > docs.size()) {
 					end = String.valueOf(docs.size());
 				}
-				docsSubList = docs.subList(Integer.parseInt(start), Integer.parseInt(end));
+			
 				
 				AssetCategory categoriaPadre = _buscadorUtils.getCategoriaPadre(_buscadorUtils.getCategoria(categoria[0]));
 				Set<String> setArticles = new HashSet<>();
 
-				for (Document doc : docs.subList(Integer.parseInt(start), Integer.parseInt(end))) {
+				for (Document doc : docs) {
 					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
 
 					if (entryClassName.equalsIgnoreCase(DLFileEntry.class.getName()) && isDlFile) {
@@ -111,9 +105,35 @@ public class BuscadorHelper {
 		} catch (Exception e) {
 			_log.debug(e);
 		}
-
+//		renderRequest.setAttribute("orden", categoriaFiltro.equals("1256470"));
+		Collections.sort(listaArticulos, new ArticuloBusqueda());
+		//Collections.sort(listaArticulos, compareByFechaCreacion);
 		return listaArticulos;
 	}
+	
+	
+	
+	
+	public Comparator<ArticuloBusqueda> compareByFechaCreacion = new Comparator<ArticuloBusqueda>() {
+		public int compare(ArticuloBusqueda doc1, ArticuloBusqueda doc2) {
+			try {
+				Date dateUno = doc1.getDateCompare();
+				Date dateDos = doc2.getDateCompare();
+				int compareValue = dateUno.compareTo(dateDos);
+				if (compareValue == 0) {
+					return 0;
+				}
+				if (compareValue < 0) {
+					return -1;
+				} else {
+					return 1;
+				}
+			} catch (Exception e) {
+				return 0;
+			}
+
+		}
+	};
 
 	public static Comparator<Document> sortDocument = new Comparator<Document>() {
 		public int compare(Document doc1, Document doc2) {
@@ -150,7 +170,7 @@ public class BuscadorHelper {
 	}
 
 	public List<ContadorCategorias> getCountsByCategory(RenderRequest renderRequest, String keyword,
-			long categoryDefault, boolean isDlFile, boolean isJournalArticle) {
+			long categoryDefault, boolean isDlFile, boolean isJournalArticle, PortletPreferences prefs, String categori) {
 		List<ContadorCategorias> listaCategorias = new ArrayList<ContadorCategorias>();
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
@@ -171,6 +191,12 @@ public class BuscadorHelper {
 							cont.setCategory(childCategory);
 							cont.setContador(hits.getLength());
 							listaCategorias.add(cont);
+							Long categoriLong = Long.parseLong(categori);
+							if(categoriLong == childCategory.getCategoryId()) {
+								int resultPag =Integer.parseInt(GetterUtil.getString(prefs.getValue(SupersociedadesBuscadorInternoPortletKeys.CONFIG_PAGINADOR, "20")));
+								renderRequest.setAttribute("totalPag", getCantPag(hits.getLength(), resultPag));
+							}
+							
 						}
 
 					} catch (Exception e) {
@@ -181,15 +207,18 @@ public class BuscadorHelper {
 				_log.debug(e);
 			}
 		}
+		
+		
+		
 		return listaCategorias;
 	}
 
 	public int getCountByCategory(RenderRequest renderRequest, String keyword, long[] categoria, boolean isDlFile,
-			boolean isJournalArticle) {
+			boolean isJournalArticle, String categoriaFiltro) {
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		int tipo = getTipo(isDlFile, isJournalArticle);
 		SearchContext searchContext = _searchContextHelper.getSearchContext(td, keyword, categoria, tipo, "", "",
-				false);
+				false,categoriaFiltro);
 
 		int contador = 0;
 		try {
@@ -218,6 +247,8 @@ public class BuscadorHelper {
 		
 		return cantPag;
 	}
+	
+	
 	
 	
 	

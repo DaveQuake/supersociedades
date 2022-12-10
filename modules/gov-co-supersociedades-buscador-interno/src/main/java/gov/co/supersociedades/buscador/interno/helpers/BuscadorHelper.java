@@ -51,17 +51,21 @@ public class BuscadorHelper {
 	public List<ArticuloBusqueda> searchByCategory(RenderRequest renderRequest, String keyword, long[] categoria,
 			boolean isDlFile, boolean isJournalArticle, String start, String end, boolean pagination,
 			PortletPreferences prefs, String categoriaFiltro) {
-		List<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>();
-
+		long inicio = System.currentTimeMillis();
+		ArrayList<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>();
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		int tipo = getTipo(isDlFile, isJournalArticle);
-		SearchContext searchContext = _searchContextHelper.getSearchContext(td, keyword, categoria, tipo, start, end,
+		long inicio2 = System.currentTimeMillis();
+		SearchContext searchContext = _searchContextHelper.getSearchContext(td, keyword, categoria, tipo, "-1", "-1",
 				pagination,categoriaFiltro);
+		long fin2 = System.currentTimeMillis();
+		_log.info("Tiempo de creacion del searchContext: " + (fin2 - inicio2));
 
 		try {
 			FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
 
 			Hits hits = facetedSearcher.search(searchContext);
+
 			List<Document> docs = hits.toList();
 			
 			if (Validator.isNotNull(docs)) {
@@ -70,10 +74,16 @@ public class BuscadorHelper {
 					end = String.valueOf(docs.size());
 				}
 			
-				
+				long inicio3 = System.currentTimeMillis();
 				AssetCategory categoriaPadre = _buscadorUtils.getCategoriaPadre(_buscadorUtils.getCategoria(categoria[0]));
+				long fin3 = System.currentTimeMillis();
+				_log.info("Tiempo de obtener la categoria padre: " + (fin3 - inicio3));
+				long inicio4 = System.currentTimeMillis();
 				Set<String> setArticles = new HashSet<>();
+				long fin4 = System.currentTimeMillis();
+				_log.info("Tiempo de crear el set: " + (fin4 - inicio4));
 
+				long inicio5 = System.currentTimeMillis();
 				for (Document doc : docs) {
 					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
 
@@ -99,16 +109,24 @@ public class BuscadorHelper {
 						ArticuloBusqueda articulo = _buscadorUtils.getInfoArticulo(td, doc);
 						articulo.setCategoriaPadre(categoriaPadre.getName());
 						listaArticulos.add(articulo);
+
 					}
 				}
+				long fin5 = System.currentTimeMillis();
+				_log.info("Tiempo de recorrer los documentos: " + (fin5 - inicio5));
 			}
 		} catch (Exception e) {
 			_log.debug(e);
 		}
 //		renderRequest.setAttribute("orden", categoriaFiltro.equals("1256470"));
+		long inicio6 = System.currentTimeMillis();
 		Collections.sort(listaArticulos, new ArticuloBusqueda());
+		long fin6 = System.currentTimeMillis();
+		_log.info("Tiempo de ordenar los articulos: " + (fin6 - inicio6));
 		//Collections.sort(listaArticulos, compareByFechaCreacion);
-		return listaArticulos;
+		long fin = System.currentTimeMillis();
+		_log.info("Tiempo de busqueda: " + (fin - inicio));
+		return listaArticulos.subList(Integer.parseInt(start), Integer.parseInt(end));
 	}
 	
 	

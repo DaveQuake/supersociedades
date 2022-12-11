@@ -1,4 +1,4 @@
-package com.aria.liferay.documentos.util;
+package com.aria.liferay.documentos.model;
 
 import com.opencsv.bean.CsvBindByName;
 
@@ -6,13 +6,10 @@ public class ConceptosJuridicos {
 
      @CsvBindByName
      private String nombre;
-
      @CsvBindByName
      private String titulo;
-
      @CsvBindByName
      private String epigrafe;
-
      @CsvBindByName
      private String fechaExpedicion;
      @CsvBindByName

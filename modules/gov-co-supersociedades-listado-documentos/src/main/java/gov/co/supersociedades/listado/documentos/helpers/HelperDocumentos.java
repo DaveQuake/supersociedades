@@ -16,10 +16,12 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +42,6 @@ public class HelperDocumentos {
 
 	private static final Log _log = LogFactoryUtil.getLog(HelperDocumentos.class);
 	private volatile ListadoConfiguration _listadoConfig;
-	private String PATRON = "dd-MM-yyyy";
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 
 	@Activate
@@ -77,18 +78,17 @@ public class HelperDocumentos {
 				_log.error("Error en el proceso de busqueda documentos: ", e);
 			}
 		}
-		List<ListadoDocumentos> listaOrdenada = new ArrayList(listadoDoc);
 		if(listadoDoc.size() > 0) {
 			if (listadoDoc.get(0).getNombreListado().contains("20")) {
 
-				Collections.sort(listaOrdenada, compareByFechaCreacion);
-				return listaOrdenada;
+				Collections.sort(listadoDoc, compareByFechaCreacion);
+				return listadoDoc;
 			} else {
-				Collections.sort(listaOrdenada, compareName);
-				return listaOrdenada;
+				Collections.sort(listadoDoc, compareName);
+				return listadoDoc;
 			}
 		}else {
-			return listaOrdenada;
+			return listadoDoc;
 		}
 		
 
@@ -106,7 +106,6 @@ public class HelperDocumentos {
 					String url = DLUtil.getPreviewURL(files, files.getLatestFileVersion(), td, StringPool.BLANK);
 					doc.setNombreDocumento(files.getTitle());
 					doc.setDescripcion(files.getDescription());
-					SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATRON);
 					String extencion = files.getExtension();
 					if(extencion.contains(".")) {
 						extencion= files.getExtension().split(".")[0];
@@ -137,9 +136,8 @@ public class HelperDocumentos {
 					continue;
 				}
 			}
-			List<Documento> listaOrdenada = new ArrayList(listDoc);
-			Collections.sort(listaOrdenada ,compareByFechaCreacionDocumento);
-			listado.setDocumentos(listaOrdenada);
+			Collections.sort(listDoc ,compareByFechaCreacionDocumento);
+			listado.setDocumentos(listDoc);
 		}
 		
 		
@@ -150,21 +148,30 @@ public class HelperDocumentos {
 
 		@Override
 		public int compare(Documento documentoUno, Documento documentoDos) {
-
-			String tituloUno = documentoUno.getFechaExpedicion();
-			String tituloDos = documentoDos.getFechaExpedicion();
-			if(tituloUno == tituloDos) {
-				tituloUno = documentoUno.getNombreDocumento();
-				tituloDos = documentoDos.getNombreDocumento();
-			}
-			int compareValue = tituloUno.compareTo(tituloDos);
-
-			if (compareValue == 0) {
+			try {
+				Date dateUno = formatter.parse(documentoUno.getFechaExpedicion());
+				Date dateDos = formatter.parse(documentoDos.getFechaExpedicion());
+				
+				String tituloUno = documentoUno.getFechaExpedicion();
+				String tituloDos = documentoDos.getFechaExpedicion();
+				int compareValue=0;
+				if(dateUno == dateDos) {
+					tituloUno = documentoUno.getNombreDocumento();
+					tituloDos = documentoDos.getNombreDocumento();
+					compareValue = tituloUno.compareTo(tituloDos);
+				}else {
+					compareValue = dateUno.compareTo(dateDos);
+				}
+				if (compareValue == 0) {
+					return 0;
+				} else if (compareValue > 0) {
+					return -1;
+				} else {
+					return 1;
+				}
+			} catch (ParseException e) {
+				_log.error(e);
 				return 0;
-			} else if (compareValue > 0) {
-				return -1;
-			} else {
-				return 1;
 			}
 		}
 

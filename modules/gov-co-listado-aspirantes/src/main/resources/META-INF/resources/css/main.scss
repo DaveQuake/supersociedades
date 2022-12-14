@@ -1,0 +1,134 @@
+.gov-co-listado-aspirantes {
+}
+.portlet-content-container{
+	padding-bottom: 1% !important;
+}
+
+.titulo-general {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 24px;
+	color: #2A477A;
+}
+
+.panel-default>.panel-heading {
+	color: #333;
+	background-color: #fff;
+	border-color: #e4e5e7;
+	padding: 0;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.panel-default>.panel-heading a {
+	display: block;
+	padding: 10px 15px;
+}
+
+.panel-default>.panel-heading a:after {
+	content: "";
+	color: #ffff;
+	font-size: 16px;
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	float: right;
+	transition: transform .25s linear;
+	-webkit-transition: -webkit-transform .25s linear;
+}
+
+.panel-default {
+	border-color: rgba(0, 0, 0, 0);
+}
+
+.panel-title {
+	font-weight: 500;
+	background: #2A477A;
+}
+
+.panel-default>.panel-heading a[aria-expanded="true"]:after {
+	content: "\2212";
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.panel-default>.panel-heading a[aria-expanded="false"]:after {
+	content: "\002b";
+	-webkit-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+
+.collapsed {
+	background: #2A477A;
+}
+
+.titulo {
+	font-family: 'Work Sans';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 17px;
+	line-height: 19px;
+	color: #ffff;
+}
+
+.titulo_doc {
+	color: #3C2FEE !important;
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 16px;
+}
+
+.img-modal {
+	width: 54px;
+	height: 70px;
+}
+
+.pd-left{
+	padding-left: 2%;
+}
+
+.fecha-modal {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 14px;
+	color: #2A477A;
+	text-align: right;
+}
+
+.txt-justificado{
+	text-align: justify;
+}
+
+.wd-100{
+	width: 100%;
+}
+
+@media ( max-width : 768px) {
+	.fecha-modal {
+		padding-left: 0;
+	}
+	.hr-modal {
+		margin-left: 0 !important;
+	}
+	.ml-50 {
+		margin-left: 0 !important;
+	}
+	.panel-title {
+		margin-left: 0 !important;
+	}
+	.container a {
+		margin-left: 0;
+	}
+}

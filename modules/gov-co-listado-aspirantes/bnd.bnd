@@ -1,0 +1,4 @@
+Bundle-Name: gov-co-listado-aspirantes
+Bundle-SymbolicName: co.gov.supersociedades.aspirantes
+Bundle-Version: 1.0.0
+Export-Package: co.gov.supersociedades.aspirantes.constants

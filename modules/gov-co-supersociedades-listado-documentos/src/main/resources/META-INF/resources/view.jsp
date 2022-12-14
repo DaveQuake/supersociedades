@@ -131,10 +131,10 @@
                                                       </div>
                                                    </td>
                                                 </tr>
-                                                <c:if test="${not empty articulo.urlExterna}">
+                                                <c:if test="${not empty documento.urlExterna}">
                                                    <tr>
                                                       <td>
-                                                      	<span title="Enlace externo"  class="text-info-data" style="cursor: pointer; border-bottom: solid 1px; color: #007bff !important;" onclick="openUrlExterna('${articulo.urlExterna}');">Enlace Externo</span>
+                                                      	<span title="Enlace externo"  class="text-info-data" style="cursor: pointer; border-bottom: solid 1px; color: #007bff !important;" onclick="openUrlExterna('${documento.urlExterna}');">Enlace Externo</span>
 													  </td>
                                                    </tr>
                                                 </c:if>

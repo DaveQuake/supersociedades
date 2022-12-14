@@ -122,13 +122,14 @@ public class HelperDocumentos {
 					doc.setFecha(date);
 					doc.setUrlDocumento(url);
 					String fechaExpedicion =getFechaMetaData(files, td, Constantes.FECHA_EXPEDICION);
-					String urlExterna = getFechaMetaData(files, td, Constantes.URL_ENLACE_OTRA_PAG);
+					String urlExterna = getStringMetaData(files, td, Constantes.URL_ENLACE_OTRA_PAG);
 					if(Validator.isNull(fechaExpedicion)) {
 						if(Validator.isNotNull(files.getModifiedDate())) {
 							fechaExpedicion = (formatter.format(files.getModifiedDate()));
 						}
 					}
 					doc.setUrlExterna(urlExterna);
+					//_log.info("url externa del documento "+doc.getUrlExterna());
 					doc.setFechaExpedicion(fechaExpedicion);
 					doc.setPeso(String.valueOf(files.getSize() / 1000));
 					listDoc.add(doc);
@@ -209,9 +210,10 @@ public class HelperDocumentos {
 				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
 				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
 					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
+						//_log.info("nombre de campo "+formfieldValue.getName());
 						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
 							data = formfieldValue.getValue().getString(td.getLocale());
-
+							//_log.info("valor del metadato "+data);
 						}
 					}
 				}

@@ -2,3 +2,4 @@ Bundle-Name: gov-co-supersociedades-buscador-interno
 Bundle-SymbolicName: gov.co.supersociedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-Package: gov.co.supersociedades.buscador.interno.constants
+Export-Package: gov.co.supersociedades.buscador.interno.helpers

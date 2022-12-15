@@ -52,7 +52,7 @@ public class BuscadorHelper {
 			boolean isDlFile, boolean isJournalArticle, String start, String end, boolean pagination,
 			PortletPreferences prefs, String categoriaFiltro) {
 		long inicio = System.currentTimeMillis();
-		ArrayList<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>(5);
+		ArrayList<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>(20);
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		int tipo = getTipo(isDlFile, isJournalArticle);
 		long inicio2 = System.currentTimeMillis();
@@ -67,6 +67,18 @@ public class BuscadorHelper {
 			Hits hits = facetedSearcher.search(searchContext);
 
 			List<Document> docs = hits.toList();
+			int total = docs.size();
+
+//string tokennizer para sacar la fecha metada del archivo
+long inicio33 = System.currentTimeMillis();
+			for (int i=0;i<total;i++){
+				_log.info(docs.get(i).get("ddmContent"));
+				_log.info(docs.get(i).get("title"));
+//				_log.info(_buscadorUtils.getInfoDocumento(td, docs.get(i)));
+			}
+long fin33 = System.currentTimeMillis();
+_log.info("Tiempo de recorrido de los documentos forClasic: " + (fin33 - inicio33));
+
 			
 			if (Validator.isNotNull(docs)) {
 				
@@ -87,27 +99,32 @@ public class BuscadorHelper {
 
 
 				long inicio5 = System.currentTimeMillis();
-				docs.stream().filter(a->a.get(Field.ENTRY_CLASS_NAME).equals(JournalArticle.class.getName())&&isDlFile||isJournalArticle).forEach(a->{
-					setArticles.add(a.get(Field.ARTICLE_ID));
-					ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, a);
-					articulo.setCategoriaPadre(categoriaPadre.getName());
-					listaArticulos.add(articulo);
-				});
-//				for (Document doc : docs) {
-//					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
-//
-//					if (entryClassName.equalsIgnoreCase(DLFileEntry.class.getName()) && isDlFile) {
-//						String idArticle = doc.get(Field.ENTRY_CLASS_PK);
-//						if (setArticles.contains(idArticle))
-//							continue;
-//						else
-//							setArticles.add(idArticle);
-//
-//						ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, doc);
-//						articulo.setCategoriaPadre(categoriaPadre.getName());
-//						listaArticulos.add(articulo);
-//					}
-//
+//				docs.stream().filter(a->a.get(Field.ENTRY_CLASS_NAME).equals(DLFileEntry.class.getName())&&isDlFile).forEach(a->{
+//					setArticles.add(a.get(Field.ENTRY_CLASS_PK));
+//					ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, a);
+//					articulo.setCategoriaPadre(categoriaPadre.getName());
+//					listaArticulos.add(articulo);
+//				});
+
+				for (ArticuloBusqueda articulo : listaArticulos) {
+					_log.info("Articulo fecha: " + articulo.getFechaExtencion());
+
+				}
+				for (Document doc : docs) {
+					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
+
+					if (entryClassName.equalsIgnoreCase(DLFileEntry.class.getName()) && isDlFile) {
+						String idArticle = doc.get(Field.ENTRY_CLASS_PK);
+						if (setArticles.contains(idArticle))
+							continue;
+						else
+							setArticles.add(idArticle);
+
+						ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, doc);
+						articulo.setCategoriaPadre(categoriaPadre.getName());
+						listaArticulos.add(articulo);
+					}
+
 //					if (entryClassName.equalsIgnoreCase(JournalArticle.class.getName()) && isJournalArticle) {
 //						String idArticle = doc.get(Field.ARTICLE_ID);
 //						if (setArticles.contains(idArticle))
@@ -121,7 +138,7 @@ public class BuscadorHelper {
 //
 //
 //					}
-//				}
+				}
 				long fin5 = System.currentTimeMillis();
 				_log.info("Tiempo de recorrer los documentos: " + (fin5 - inicio5));
 			}

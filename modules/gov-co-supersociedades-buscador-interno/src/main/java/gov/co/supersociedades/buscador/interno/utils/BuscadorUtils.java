@@ -80,24 +80,24 @@ public class BuscadorUtils {
 			
 			articulo.setUlrArticulo(DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true));
 			articulo.setDescripcion(fileEntry.getDescription());
-			Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
-			if (indexer != null) {
-				String snippet = doc.get(Field.SNIPPET);
-				Summary summary = indexer.getSummary(doc, snippet, null, null);
-				if (summary != null) {
-					articulo.setTituloArticulo(summary.getTitle());
+			//Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
+			//if (indexer != null) {
+//				String snippet = doc.get(Field.SNIPPET);
+				//Summary summary = indexer.getSummary(doc, snippet, null, null);
+				//if (summary != null) {
+					articulo.setTituloArticulo(fileEntry.getTitle());
 					articulo.setDescripcion(fileEntry.getDescription());
 					articulo.setExtension(fileEntry.getExtension());
-					String fechaExpedicion = getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
+//
+//					String fechaExpedicion ;
+
 					Date fechaExpedicionCompare =getFechaMetaDataCompare(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
-					if(Validator.isNull(fechaExpedicion)) {
-						if(Validator.isNotNull(fileEntry.getModifiedDate())) {
-							fechaExpedicion = (formatter.format(fileEntry.getModifiedDate()));
-							fechaExpedicionCompare = fileEntry.getModifiedDate();
-						}
+					if(Validator.isNull(fechaExpedicionCompare)) {
+						fechaExpedicionCompare = fileEntry.getModifiedDate();
+
 					}
-					articulo.setDateCompare(fechaExpedicionCompare);					
-					articulo.setFechaExtencion(fechaExpedicion);
+					articulo.setDateCompare(fechaExpedicionCompare);
+					articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
 					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
 					
 					String fechaPublicacion =getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
@@ -110,8 +110,8 @@ public class BuscadorUtils {
 					}
 					articulo.setFechaActualizacion(fechaPublicacion);
 					articulo.setDateModificate(fileEntry.getCreateDate());
-				}
-			}
+				//}
+			//}
 			
 			return articulo;
 		} catch (Exception e) {

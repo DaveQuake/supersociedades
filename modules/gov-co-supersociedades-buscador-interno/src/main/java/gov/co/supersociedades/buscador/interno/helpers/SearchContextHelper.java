@@ -45,15 +45,11 @@ public class SearchContextHelper {
 		
 		boolean desc = true;
 		
-		if(categoryFiltro.equals("1256470")) {
-			Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.TITLE),Sort.STRING_TYPE, desc);
-			Sort[] sorts = new Sort[] {new Sort(Field.TITLE, false)};
-			searchContext.setSorts(sorts);
-		}else {
+
 			Sort sortDisplayDate = new Sort(Field.getSortableFieldName(Field.CREATE_DATE),Sort.LONG_TYPE, desc);
 			Sort[] sorts = new Sort[] {new Sort(Field.CREATE_DATE, false)};
 			searchContext.setSorts(sorts);
-		}
+
 		
 		
 		searchContext.setScopeStrict(true);

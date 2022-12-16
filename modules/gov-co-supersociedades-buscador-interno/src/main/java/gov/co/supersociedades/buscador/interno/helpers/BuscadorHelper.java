@@ -4,6 +4,9 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.portal.kernel.dao.orm.CacheMode;
+import com.liferay.portal.kernel.dao.orm.CacheModeImpl;
+import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -30,6 +33,7 @@ import java.util.Set;
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 
+import com.sun.webkit.dom.EntityReferenceImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -52,7 +56,7 @@ public class BuscadorHelper {
 			boolean isDlFile, boolean isJournalArticle, String start, String end, boolean pagination,
 			PortletPreferences prefs, String categoriaFiltro) {
 		long inicio = System.currentTimeMillis();
-		ArrayList<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>(20);
+		ArrayList<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>(5);
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		int tipo = getTipo(isDlFile, isJournalArticle);
 		long inicio2 = System.currentTimeMillis();
@@ -61,25 +65,15 @@ public class BuscadorHelper {
 		long fin2 = System.currentTimeMillis();
 		_log.info("Tiempo de creacion del searchContext: " + (fin2 - inicio2));
 
+		int num=0;
 		try {
 			FacetedSearcher facetedSearcher = FacetedSearcherManagerUtil.createFacetedSearcher();
 
 			Hits hits = facetedSearcher.search(searchContext);
 
 			List<Document> docs = hits.toList();
-			int total = docs.size();
 
-//string tokennizer para sacar la fecha metada del archivo
-long inicio33 = System.currentTimeMillis();
-			for (int i=0;i<total;i++){
-				_log.info(docs.get(i).get("ddmContent"));
-				_log.info(docs.get(i).get("title"));
-//				_log.info(_buscadorUtils.getInfoDocumento(td, docs.get(i)));
-			}
-long fin33 = System.currentTimeMillis();
-_log.info("Tiempo de recorrido de los documentos forClasic: " + (fin33 - inicio33));
 
-			
 			if (Validator.isNotNull(docs)) {
 				
 				if(Integer.parseInt(end) > docs.size()) {
@@ -99,54 +93,52 @@ _log.info("Tiempo de recorrido de los documentos forClasic: " + (fin33 - inicio3
 
 
 				long inicio5 = System.currentTimeMillis();
-//				docs.stream().filter(a->a.get(Field.ENTRY_CLASS_NAME).equals(DLFileEntry.class.getName())&&isDlFile).forEach(a->{
-//					setArticles.add(a.get(Field.ENTRY_CLASS_PK));
-//					ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, a);
-//					articulo.setCategoriaPadre(categoriaPadre.getName());
-//					listaArticulos.add(articulo);
-//				});
+				Hilos hilo1 = new Hilos();
+				hilo1.run();
 
-				for (ArticuloBusqueda articulo : listaArticulos) {
-					_log.info("Articulo fecha: " + articulo.getFechaExtencion());
-
-				}
-				for (Document doc : docs) {
-					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
-
-					if (entryClassName.equalsIgnoreCase(DLFileEntry.class.getName()) && isDlFile) {
-						String idArticle = doc.get(Field.ENTRY_CLASS_PK);
-						if (setArticles.contains(idArticle))
-							continue;
-						else
-							setArticles.add(idArticle);
-
-						ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, doc);
-						articulo.setCategoriaPadre(categoriaPadre.getName());
-						listaArticulos.add(articulo);
-					}
-
-//					if (entryClassName.equalsIgnoreCase(JournalArticle.class.getName()) && isJournalArticle) {
-//						String idArticle = doc.get(Field.ARTICLE_ID);
+//				for (Document doc : docs) {
+//					num=num++;
+//					_log.info(num);
+//					String entryClassName = doc.get(Field.ENTRY_CLASS_NAME);
+//
+//					if (entryClassName.equalsIgnoreCase(DLFileEntry.class.getName()) && isDlFile) {
+//						String idArticle = doc.get(Field.ENTRY_CLASS_PK);
 //						if (setArticles.contains(idArticle))
 //							continue;
 //						else
 //							setArticles.add(idArticle);
 //
-//						ArticuloBusqueda articulo = _buscadorUtils.getInfoArticulo(td, doc);
+//						ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, doc);
 //						articulo.setCategoriaPadre(categoriaPadre.getName());
 //						listaArticulos.add(articulo);
-//
-//
 //					}
-				}
+//
+//
+////					if (entryClassName.equalsIgnoreCase(JournalArticle.class.getName()) && isJournalArticle) {
+////						String idArticle = doc.get(Field.ARTICLE_ID);
+////						if (setArticles.contains(idArticle))
+////							continue;
+////						else
+////							setArticles.add(idArticle);
+////
+////						ArticuloBusqueda articulo = _buscadorUtils.getInfoArticulo(td, doc);
+////						articulo.setCategoriaPadre(categoriaPadre.getName());
+////						listaArticulos.add(articulo);
+////
+////
+////					}
+//				}
 				long fin5 = System.currentTimeMillis();
 				_log.info("Tiempo de recorrer los documentos: " + (fin5 - inicio5));
 			}
 
 
 		} catch (Exception e) {
-			_log.debug(e);
+			_log.info(e);
 		}
+
+
+
 //		renderRequest.setAttribute("orden", categoriaFiltro.equals("1256470"));
 		long inicio6 = System.currentTimeMillis();
 		Collections.sort(listaArticulos, new ArticuloBusqueda());

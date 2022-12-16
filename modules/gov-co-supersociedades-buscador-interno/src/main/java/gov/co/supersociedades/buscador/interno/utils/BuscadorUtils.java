@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +92,7 @@ public class BuscadorUtils {
 //
 //					String fechaExpedicion ;
 
-					Date fechaExpedicionCompare =getFechaMetaDataCompare(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
+					Date fechaExpedicionCompare =getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
 					if(Validator.isNull(fechaExpedicionCompare)) {
 						fechaExpedicionCompare = fileEntry.getModifiedDate();
 
@@ -100,8 +101,8 @@ public class BuscadorUtils {
 					articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
 					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
 					
-					String fechaPublicacion =getFechaMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
-					String urlExterna =getStringMetaData(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
+					String fechaPublicacion =getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
+					String urlExterna =getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
 					articulo.setUrlExterna(urlExterna);
 					if(Validator.isNull(fechaPublicacion)) {
 						if(Validator.isNotNull(fileEntry.getCreateDate())) {
@@ -115,11 +116,133 @@ public class BuscadorUtils {
 			
 			return articulo;
 		} catch (Exception e) {
-			_log.debug(e);
+			_log.info(e);
 			return null;
 		}
 	}
-	
+	public String[] getInfoDocumentoTEST(ThemeDisplay td, Document doc) {
+
+		try {
+			//ArticuloBusqueda articulo = new ArticuloBusqueda();
+			String entryClassName = GetterUtil.getString(doc.get(Field.ENTRY_CLASS_NAME));
+			long entryClassPK = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
+
+			FileEntry fileEntry = _dlAppLocalService.getFileEntry(entryClassPK);
+			FileVersion fileVersion = fileEntry.getLatestFileVersion();
+
+//			articulo.setUlrArticulo(DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true));
+//			articulo.setDescripcion(fileEntry.getDescription());
+//			//Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
+//			//if (indexer != null) {
+////				String snippet = doc.get(Field.SNIPPET);
+//			//Summary summary = indexer.getSummary(doc, snippet, null, null);
+//			//if (summary != null) {
+//			articulo.setTituloArticulo(fileEntry.getTitle());
+//			articulo.setDescripcion(fileEntry.getDescription());
+//			articulo.setExtension(fileEntry.getExtension());
+////
+////					String fechaExpedicion ;
+//
+//			Date fechaExpedicionCompare =getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
+//			if(Validator.isNull(fechaExpedicionCompare)) {
+//				fechaExpedicionCompare = fileEntry.getModifiedDate();
+//
+//			}
+//			articulo.setDateCompare(fechaExpedicionCompare);
+//			articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
+//			articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
+//
+//			String fechaPublicacion =getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
+//			String urlExterna =getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
+//			articulo.setUrlExterna(urlExterna);
+//			if(Validator.isNull(fechaPublicacion)) {
+//				if(Validator.isNotNull(fileEntry.getCreateDate())) {
+//					fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
+//				}
+//			}
+//			articulo.setFechaActualizacion(fechaPublicacion);
+//			articulo.setDateModificate(fileEntry.getCreateDate());
+//			//}
+//			//}
+			return new String[]{
+					DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true),
+					fileEntry.getTitle(),
+					fileEntry.getDescription(),
+					fileEntry.getExtension(),
+					getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION).toString(),
+					generarFecha(formatterDos.format(getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION))),
+					String.valueOf(fileEntry.getSize()/1000),
+					getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION),
+					getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG),
+					fileEntry.getCreateDate().toString()
+//
+			};
+
+		} catch (Exception e) {
+			_log.info(e);
+			return null;
+		}
+	}
+
+	public Date getFechaMetaDataCompareTEST(FileEntry file, ThemeDisplay td, String nombreCampo) throws ParseException, ParseException {
+		String fecha = "";
+		//long idstructure=2851561;
+		long idstructure=49452;
+		try {
+//sacar el long del file version en el metodo getinfodocumento
+			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idstructure, file.getFileVersion().getFileVersionId());
+
+				DDMFormValues ddmFormValues = StorageEngineManagerUtil
+						.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
+
+					fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
+
+			return formatterDos.parse(fecha);
+		}catch (Exception e) {
+			if(Validator.isNotNull(file.getModifiedDate())) {
+				return file.getModifiedDate();
+			}else {
+				return file.getCreateDate();
+			}
+		}
+
+	}
+	public String getFechaMetaDataTEST2(FileEntry file, ThemeDisplay td, String nombreCampo) throws PortalException {
+		String fecha = "";
+		//long idstructure=2221997;
+		long idstructure=49447;
+		try{
+			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idstructure, file.getFileVersion().getFileVersionId());
+
+
+			DDMFormValues ddmFormValues = StorageEngineManagerUtil
+					.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
+			fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
+			return generarFecha(fecha);
+		}catch (Exception e) {
+			return "";
+		}
+	}
+	public String getStringMetaDataTEST(FileEntry file, ThemeDisplay td, String nombreCampo) throws PortalException {
+		String data = "";
+		//long idstructure=2851561;
+		long idstructure=1111111;
+		try{
+			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idstructure, file.getFileVersion().getFileVersionId());
+
+
+			DDMFormValues ddmFormValues = StorageEngineManagerUtil
+					.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
+			data=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
+			return data;
+		}catch (Exception e) {
+			if(Validator.isNotNull(file.getModifiedDate())) {
+				return "";
+			}else {
+				return "";
+			}
+		}
+	}
 	public String getFechaMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
 		String fecha = "";
 		try {

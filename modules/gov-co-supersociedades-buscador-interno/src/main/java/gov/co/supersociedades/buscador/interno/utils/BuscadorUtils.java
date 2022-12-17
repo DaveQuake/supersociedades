@@ -1,6 +1,5 @@
 package gov.co.supersociedades.buscador.interno.utils;
 
-import com.liferay.alloy.util.Constants;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
@@ -20,9 +19,6 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
-import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -69,23 +65,26 @@ public class BuscadorUtils {
 		return articulo;
 	}
 	
-	public ArticuloBusqueda getInfoDocumento(ThemeDisplay td, Document doc) {
-		
+	public ArticuloBusqueda getInfoDocumento(ThemeDisplay td, String doc) {
+	//public ArticuloBusqueda getInfoDocumento(ThemeDisplay td, Document doc) {		
 		try {
 			ArticuloBusqueda articulo = new ArticuloBusqueda();
-			String entryClassName = GetterUtil.getString(doc.get(Field.ENTRY_CLASS_NAME));
-			long entryClassPK = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
+			//String entryClassName = GetterUtil.getString(doc.get(Field.ENTRY_CLASS_NAME));
+			//long entryClassPK = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
+			long entryClassPK = GetterUtil.getLong(doc);
 			
+			long timegetFileEntry = System.currentTimeMillis();
 			FileEntry fileEntry = _dlAppLocalService.getFileEntry(entryClassPK);
-			FileVersion fileVersion = fileEntry.getLatestFileVersion();
+			_log.info("tiempo metadato getFileEntry "+(System.currentTimeMillis()- timegetFileEntry));
+			
+			long timegetLatestFileVersion = System.currentTimeMillis();
+			FileVersion fileVersion = fileEntry.getFileVersion();
+			_log.info("tiempo metadato getLatestFileVersion "+(System.currentTimeMillis()- timegetLatestFileVersion));
+			
 			
 			articulo.setUlrArticulo(DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true));
 			articulo.setDescripcion(fileEntry.getDescription());
-			//Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
-			//if (indexer != null) {
-//				String snippet = doc.get(Field.SNIPPET);
-				//Summary summary = indexer.getSummary(doc, snippet, null, null);
-				//if (summary != null) {
+			
 					articulo.setTituloArticulo(fileEntry.getTitle());
 					articulo.setDescripcion(fileEntry.getDescription());
 					articulo.setExtension(fileEntry.getExtension());
@@ -95,11 +94,15 @@ public class BuscadorUtils {
 					Date fechaExpedicionCompare =getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
 					if(Validator.isNull(fechaExpedicionCompare)) {
 						fechaExpedicionCompare = fileEntry.getModifiedDate();
-
 					}
-					articulo.setDateCompare(fechaExpedicionCompare);
+					
+					
+					articulo.setDateCompare(formatterDos.parse(fechaExpedicionCompare));
+					_log.info("tiempo metadato fechaexp "+(System.currentTimeMillis()-timeFechaExp));
+					
+					//long timeparseGenerarFecha = System.currentTimeMillis();
 					articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
-					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
+					//_log.info("tiempo metadato timeparseGenerarFecha "+(System.currentTimeMillis()-timeparseGenerarFecha));
 					
 					String fechaPublicacion =getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
 					String urlExterna =getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
@@ -109,6 +112,16 @@ public class BuscadorUtils {
 							fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
 						}
 					}
+					_log.info("tiempo metadato fechaPub "+(System.currentTimeMillis()-timeFechaPub));
+					
+					long timeUrl = System.currentTimeMillis();
+					String urlExterna =getStringMetaData(fileVersion, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
+					_log.info("tiempo metadato url "+(System.currentTimeMillis()-timeUrl));
+					
+					
+					articulo.setUrlExterna(urlExterna);
+					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
+					
 					articulo.setFechaActualizacion(fechaPublicacion);
 					articulo.setDateModificate(fileEntry.getCreateDate());
 				//}
@@ -246,81 +259,30 @@ public class BuscadorUtils {
 	public String getFechaMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
 		String fecha = "";
 		try {
-			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
-					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
-			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
-
-				DDMFormValues ddmFormValues = StorageEngineManagerUtil
-						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
-				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
-				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
-					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
-						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
-							fecha = formfieldValue.getValue().getString(td.getLocale());
-
-						}
-					}
-				}
-
-			}
-			return generarFecha(fecha);
+			long getEntryMetadatas = System.currentTimeMillis();
 			
-		} catch (Exception e) {
-			return "";
-		}
-	}
-	public Date getFechaMetaDataCompare(FileEntry file, ThemeDisplay td, String nombreCampo) {
-		String fecha = "";
-		try {
 			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
-					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
-			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
-				
-				DDMFormValues ddmFormValues = StorageEngineManagerUtil
-						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
-				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
-				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
-					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
-						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
-							fecha = formfieldValue.getValue().getString(td.getLocale());
-							
-						}
-					}
-				}
-				
-			}
-			return formatterDos.parse(fecha);
+					.getFileVersionFileEntryMetadatas(file.getFileVersionId());
+			_log.info("tiempo tiempo getEntryMetadatas "+(System.currentTimeMillis()-getEntryMetadatas));
 			
-		} catch (Exception e) {
-			if(Validator.isNotNull(file.getModifiedDate())) {
-				return file.getModifiedDate();
-			}else {
-				return file.getCreateDate();
-			}
-		}
-	}
-	public String getStringMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
-		String data = "";
-		try {
-			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
-					.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
 			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
 				
+				long getDDMFormValues = System.currentTimeMillis();
 				DDMFormValues ddmFormValues = StorageEngineManagerUtil
 						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
+				_log.info("tiempo tiempo getDDMFormValues "+(System.currentTimeMillis()-getDDMFormValues));
+				
 				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
 				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
 					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
 						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
 							data = formfieldValue.getValue().getString(td.getLocale());
-							
 						}
 					}
 				}
-				
 			}
+			_log.info("data "+data);
 			return data;
-			
 		} catch (Exception e) {
 			if(Validator.isNotNull(file.getModifiedDate())) {
 				return "";

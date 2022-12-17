@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -45,16 +43,17 @@ import gov.co.supersociedades.buscador.interno.utils.BuscadorUtils;
 @Component(immediate = true, service = BuscadorHelper.class)
 public class BuscadorHelper {
 
-	private Comparator<ArticuloBusqueda> orderByFecha = new Comparator<ArticuloBusqueda>() {
-		@Override
-		public int compare(ArticuloBusqueda articuloUno, ArticuloBusqueda articuloDos) {
-			return articuloUno.getDateModificate().compareTo(articuloDos.getDateModificate());
-		}
-	};
+//	private Comparator<ArticuloBusqueda> orderByFecha = new Comparator<ArticuloBusqueda>() {
+//		@Override
+//		public int compare(ArticuloBusqueda articuloUno, ArticuloBusqueda articuloDos) {
+//			return articuloUno.getDateModificate().compareTo(articuloDos.getDateModificate());
+//		}
+//	};
 
 	public List<ArticuloBusqueda> searchByCategory(RenderRequest renderRequest, String keyword, long[] categoria,
 			boolean isDlFile, boolean isJournalArticle, String start, String end, boolean pagination,
 			PortletPreferences prefs, String categoriaFiltro) {
+		
 		long inicio = System.currentTimeMillis();
 		ArrayList<ArticuloBusqueda> listaArticulos = new ArrayList<ArticuloBusqueda>(5);
 		ThemeDisplay td = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
@@ -72,6 +71,16 @@ public class BuscadorHelper {
 			Hits hits = facetedSearcher.search(searchContext);
 
 			List<Document> docs = hits.toList();
+			int total = docs.size();
+
+//			long inicio33 = System.currentTimeMillis();
+//			for (int i=0;i<total;i++){
+//				_log.info(docs.get(i).get("ddmContent"));
+//				_log.info(docs.get(i).get("title"));
+////				_log.info(_buscadorUtils.getInfoDocumento(td, docs.get(i)));
+//			}
+//			long fin33 = System.currentTimeMillis();
+//			_log.info("Tiempo de recorrido de los documentos forClasic: " + (fin33 - inicio33));
 
 
 			if (Validator.isNotNull(docs)) {
@@ -84,10 +93,10 @@ public class BuscadorHelper {
 				AssetCategory categoriaPadre = _buscadorUtils.getCategoriaPadre(_buscadorUtils.getCategoria(categoria[0]));
 				long fin3 = System.currentTimeMillis();
 				_log.info("Tiempo de obtener la categoria padre: " + (fin3 - inicio3));
-				long inicio4 = System.currentTimeMillis();
-				Set<String> setArticles = new HashSet<>();
-				long fin4 = System.currentTimeMillis();
-				_log.info("Tiempo de crear el set: " + (fin4 - inicio4));
+//				long inicio4 = System.currentTimeMillis();
+//				Set<String> setArticles = new HashSet<>();
+//				long fin4 = System.currentTimeMillis();
+//				_log.info("Tiempo de crear el set: " + (fin4 - inicio4));
 
 
 

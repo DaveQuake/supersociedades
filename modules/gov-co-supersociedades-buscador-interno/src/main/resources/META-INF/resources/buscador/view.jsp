@@ -109,6 +109,22 @@
 												</td>
 											</tr>
 										</c:if>
+										<c:if test="${not empty articulo.diarioDescripcion}">
+											<tr>
+												<td>
+													<span title="${articulo.diarioDescripcion}"  class="text-info-data" style="cursor: pointer; border-bottom: solid 1px; color: #007bff !important;"
+													 onclick="openUrlExterna('${articulo.diarioLink}');">${articulo.diarioDescripcion}</span>
+												</td>
+											</tr>
+										</c:if>
+										<c:if test="${not empty articulo.suinDescripcion}">
+											<tr>
+												<td>
+													<span title="${articulo.suinDescripcion}"  class="text-info-data" style="cursor: pointer; border-bottom: solid 1px; color: #007bff !important;"
+													 onclick="openUrlExterna('${articulo.suinLink}');">${articulo.suinDescripcion}</span>
+												</td>
+											</tr>
+										</c:if>
 										<c:if test="${not empty articulo.urlExterna}">
 											<tr>
 												<td>

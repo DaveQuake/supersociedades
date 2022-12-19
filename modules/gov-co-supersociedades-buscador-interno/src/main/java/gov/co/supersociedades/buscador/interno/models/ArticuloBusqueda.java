@@ -17,6 +17,10 @@ public class ArticuloBusqueda implements Comparator<ArticuloBusqueda>{
 	private String fechaExtencion;
 	private String peso;
 	private String urlExterna;
+	private String diarioDescripcion;
+	private String diarioLink;
+	private String suinDescripcion;
+	private String suinLink;
 	
 	@Override
 	public int compare(ArticuloBusqueda o1, ArticuloBusqueda o2) {
@@ -24,16 +28,77 @@ public class ArticuloBusqueda implements Comparator<ArticuloBusqueda>{
 	}
 	
 	
+	
+
 	@Override
 	public String toString() {
 		return "ArticuloBusqueda [idArticulo=" + idArticulo + ", tituloArticulo=" + tituloArticulo + ", ulrArticulo="
 				+ ulrArticulo + ", descripcion=" + descripcion + ", fechaActualizacion=" + fechaActualizacion
-				+ ", extension=" + extension + ", categoriaPadre=" + categoriaPadre + ", dateModificate="
-				+ dateModificate + ", fechaExtencion=" + fechaExtencion + "]";
+				+ ", extension=" + extension + ", dateCompare=" + dateCompare + ", categoriaPadre=" + categoriaPadre
+				+ ", dateModificate=" + dateModificate + ", fechaExtencion=" + fechaExtencion + ", peso=" + peso
+				+ ", urlExterna=" + urlExterna + ", diarioDescripcion=" + diarioDescripcion + ", diarioLink="
+				+ diarioLink + ", suinDescripcion=" + suinDescripcion + ", suinLink=" + suinLink + "]";
 	}
-	
-	
-	
+
+
+
+
+	public String getDiarioDescripcion() {
+		return diarioDescripcion;
+	}
+
+
+
+
+	public void setDiarioDescripcion(String diarioDescripcion) {
+		this.diarioDescripcion = diarioDescripcion;
+	}
+
+
+
+
+	public String getDiarioLink() {
+		return diarioLink;
+	}
+
+
+
+
+	public void setDiarioLink(String diarioLink) {
+		this.diarioLink = diarioLink;
+	}
+
+
+
+
+	public String getSuinDescripcion() {
+		return suinDescripcion;
+	}
+
+
+
+
+	public void setSuinDescripcion(String suinDescripcion) {
+		this.suinDescripcion = suinDescripcion;
+	}
+
+
+
+
+	public String getSuinLink() {
+		return suinLink;
+	}
+
+
+
+
+	public void setSuinLink(String suinLink) {
+		this.suinLink = suinLink;
+	}
+
+
+
+
 	public String getUrlExterna() {
 		return urlExterna;
 	}

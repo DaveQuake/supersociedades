@@ -6,10 +6,8 @@ import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.document.library.kernel.util.DLUtil;
-import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
-import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -17,8 +15,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
-import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -27,7 +23,6 @@ import com.liferay.portal.kernel.util.Validator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
@@ -41,91 +36,71 @@ import gov.co.supersociedades.buscador.interno.models.ArticuloBusqueda;
 @Component(immediate=true, service=BuscadorUtils.class)
 public class BuscadorUtils {
 	
-	public ArticuloBusqueda getInfoArticulo(ThemeDisplay td, Document doc) {
-		ArticuloBusqueda articulo = new ArticuloBusqueda();
-		
-		try {
-			String idArticle = doc.get(Field.ARTICLE_ID);
-			JournalArticle journalArticle = _journalArticleLocalService.getLatestArticle(td.getScopeGroupId(), idArticle);
-			if(Validator.isNotNull(journalArticle) && journalArticle.getIndexable()){
-				articulo.setTituloArticulo(journalArticle.getTitle());
-				articulo.setIdArticulo(journalArticle.getArticleId());
-				articulo.setUlrArticulo(_querysUtils.getArticlePageURL(journalArticle, td));
-				articulo.setDescripcion(journalArticle.getDescription());
-				if(Validator.isNotNull(journalArticle.getModifiedDate())) {
-					articulo.setFechaActualizacion(formatter.format(journalArticle.getModifiedDate()));
-					articulo.setDateModificate(journalArticle.getModifiedDate());
-				}
-				articulo.setExtension("web");
-			}
-		} catch (Exception e) {
-			_log.debug(e);
-		}
-		
-		return articulo;
-	}
-	
 	public ArticuloBusqueda getInfoDocumento(ThemeDisplay td, String doc) {
 	//public ArticuloBusqueda getInfoDocumento(ThemeDisplay td, Document doc) {		
 		try {
 			ArticuloBusqueda articulo = new ArticuloBusqueda();
-			//String entryClassName = GetterUtil.getString(doc.get(Field.ENTRY_CLASS_NAME));
-			//long entryClassPK = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
+
 			long entryClassPK = GetterUtil.getLong(doc);
+			long idStructureUrl=2851561;
+			long idStructurePublicacion=2221997;
+			long idStructureExpedicion=2851561;
 			
-			long timegetFileEntry = System.currentTimeMillis();
+			long idStructureDiario=4404273;
+			long idStructureDiarioLink=4404282;
+			long idStructureSuin=4404287;
+			long idStructureSuinLink=4404293;
+			
+//			long timegetFileEntry = System.currentTimeMillis();
 			FileEntry fileEntry = _dlAppLocalService.getFileEntry(entryClassPK);
-			_log.info("tiempo metadato getFileEntry "+(System.currentTimeMillis()- timegetFileEntry));
+//			_log.info("tiempo metadato getFileEntry "+(System.currentTimeMillis()- timegetFileEntry));
 			
-			long timegetLatestFileVersion = System.currentTimeMillis();
+//			long timegetLatestFileVersion = System.currentTimeMillis();
 			FileVersion fileVersion = fileEntry.getFileVersion();
-			_log.info("tiempo metadato getLatestFileVersion "+(System.currentTimeMillis()- timegetLatestFileVersion));
+			long fileVersionId=fileVersion.getFileVersionId();
+//			_log.info("tiempo metadato getLatestFileVersion "+(System.currentTimeMillis()- timegetLatestFileVersion));
 			
 			
 			articulo.setUlrArticulo(DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true));
 			articulo.setDescripcion(fileEntry.getDescription());
-			
-					articulo.setTituloArticulo(fileEntry.getTitle());
-					articulo.setDescripcion(fileEntry.getDescription());
-					articulo.setExtension(fileEntry.getExtension());
-//
-//					String fechaExpedicion ;
+			articulo.setTituloArticulo(fileEntry.getTitle());
+			articulo.setDescripcion(fileEntry.getDescription());
+			articulo.setExtension(fileEntry.getExtension());
 
-					Date fechaExpedicionCompare =getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
-					if(Validator.isNull(fechaExpedicionCompare)) {
-						fechaExpedicionCompare = fileEntry.getModifiedDate();
-					}
-					
-					
-					articulo.setDateCompare(formatterDos.parse(fechaExpedicionCompare));
-					_log.info("tiempo metadato fechaexp "+(System.currentTimeMillis()-timeFechaExp));
-					
-					//long timeparseGenerarFecha = System.currentTimeMillis();
-					articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
-					//_log.info("tiempo metadato timeparseGenerarFecha "+(System.currentTimeMillis()-timeparseGenerarFecha));
-					
-					String fechaPublicacion =getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
-					String urlExterna =getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
-					articulo.setUrlExterna(urlExterna);
-					if(Validator.isNull(fechaPublicacion)) {
-						if(Validator.isNotNull(fileEntry.getCreateDate())) {
-							fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
-						}
-					}
-					_log.info("tiempo metadato fechaPub "+(System.currentTimeMillis()-timeFechaPub));
-					
-					long timeUrl = System.currentTimeMillis();
-					String urlExterna =getStringMetaData(fileVersion, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
-					_log.info("tiempo metadato url "+(System.currentTimeMillis()-timeUrl));
-					
-					
-					articulo.setUrlExterna(urlExterna);
-					articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
-					
-					articulo.setFechaActualizacion(fechaPublicacion);
-					articulo.setDateModificate(fileEntry.getCreateDate());
-				//}
-			//}
+//			long timeFechaExp = System.currentTimeMillis();
+			Date fechaExpedicionCompare =getFechaMetaDataCompare(fileEntry, td, idStructureExpedicion);
+			if(Validator.isNull(fechaExpedicionCompare)) {
+				fechaExpedicionCompare = fileEntry.getModifiedDate();
+			}
+//			_log.info("tiempo metadato fechaexp "+(System.currentTimeMillis()-timeFechaExp));
+
+			articulo.setDateCompare(fechaExpedicionCompare);
+			articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
+			
+//			long timeFechaPub = System.currentTimeMillis();
+			String fechaPublicacion =getFechaStringMetaData(fileVersionId, td, idStructurePublicacion);
+			if(Validator.isNull(fechaPublicacion)) {
+				if(Validator.isNotNull(fileEntry.getCreateDate())) {
+					fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
+				}
+			}
+//			_log.info("tiempo metadato fechaPub "+(System.currentTimeMillis()-timeFechaPub));
+			
+//			long timeUrl = System.currentTimeMillis();
+			String urlExterna =getStringMetaData(fileVersionId, td, idStructureUrl);
+//			_log.info("tiempo metadato url "+(System.currentTimeMillis()-timeUrl));
+			
+			articulo.setUrlExterna(urlExterna);
+			articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
+			articulo.setFechaActualizacion(fechaPublicacion);
+			articulo.setDateModificate(fileEntry.getCreateDate());
+			
+			articulo.setDiarioDescripcion(getStringMetaData(fileVersionId, td, idStructureDiario));
+			articulo.setDiarioLink(getStringMetaData(fileVersionId, td, idStructureDiarioLink));
+			articulo.setSuinDescripcion(getStringMetaData(fileVersionId, td, idStructureSuin));
+			articulo.setSuinLink(getStringMetaData(fileVersionId, td, idStructureSuinLink));
+			
+			
 			
 			return articulo;
 		} catch (Exception e) {
@@ -133,83 +108,13 @@ public class BuscadorUtils {
 			return null;
 		}
 	}
-	public String[] getInfoDocumentoTEST(ThemeDisplay td, Document doc) {
 
-		try {
-			//ArticuloBusqueda articulo = new ArticuloBusqueda();
-			String entryClassName = GetterUtil.getString(doc.get(Field.ENTRY_CLASS_NAME));
-			long entryClassPK = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
-
-			FileEntry fileEntry = _dlAppLocalService.getFileEntry(entryClassPK);
-			FileVersion fileVersion = fileEntry.getLatestFileVersion();
-
-//			articulo.setUlrArticulo(DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true));
-//			articulo.setDescripcion(fileEntry.getDescription());
-//			//Indexer<?> indexer = IndexerRegistryUtil.getIndexer(entryClassName);
-//			//if (indexer != null) {
-////				String snippet = doc.get(Field.SNIPPET);
-//			//Summary summary = indexer.getSummary(doc, snippet, null, null);
-//			//if (summary != null) {
-//			articulo.setTituloArticulo(fileEntry.getTitle());
-//			articulo.setDescripcion(fileEntry.getDescription());
-//			articulo.setExtension(fileEntry.getExtension());
-////
-////					String fechaExpedicion ;
-//
-//			Date fechaExpedicionCompare =getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION);
-//			if(Validator.isNull(fechaExpedicionCompare)) {
-//				fechaExpedicionCompare = fileEntry.getModifiedDate();
-//
-//			}
-//			articulo.setDateCompare(fechaExpedicionCompare);
-//			articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
-//			articulo.setPeso(String.valueOf(fileEntry.getSize()/1000));
-//
-//			String fechaPublicacion =getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION);
-//			String urlExterna =getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG);
-//			articulo.setUrlExterna(urlExterna);
-//			if(Validator.isNull(fechaPublicacion)) {
-//				if(Validator.isNotNull(fileEntry.getCreateDate())) {
-//					fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
-//				}
-//			}
-//			articulo.setFechaActualizacion(fechaPublicacion);
-//			articulo.setDateModificate(fileEntry.getCreateDate());
-//			//}
-//			//}
-			return new String[]{
-					DLUtil.getPreviewURL(fileEntry, fileVersion, td, StringPool.BLANK, true, true),
-					fileEntry.getTitle(),
-					fileEntry.getDescription(),
-					fileEntry.getExtension(),
-					getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION).toString(),
-					generarFecha(formatterDos.format(getFechaMetaDataCompareTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_EXPEDICION))),
-					String.valueOf(fileEntry.getSize()/1000),
-					getFechaMetaDataTEST2(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.FECHA_PUBLICACION),
-					getStringMetaDataTEST(fileEntry, td, SupersociedadesBuscadorInternoPortletKeys.URL_ENLACE_OTRA_PAG),
-					fileEntry.getCreateDate().toString()
-//
-			};
-
-		} catch (Exception e) {
-			_log.info(e);
-			return null;
-		}
-	}
-
-	public Date getFechaMetaDataCompareTEST(FileEntry file, ThemeDisplay td, String nombreCampo) throws ParseException, ParseException {
+	public Date getFechaMetaDataCompare(FileEntry file, ThemeDisplay td, long idEstructura) throws ParseException, ParseException {
 		String fecha = "";
-		//long idstructure=2851561;
-		long idstructure=49452;
 		try {
-//sacar el long del file version en el metodo getinfodocumento
-			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idstructure, file.getFileVersion().getFileVersionId());
-
-				DDMFormValues ddmFormValues = StorageEngineManagerUtil
-						.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
-
-					fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
-
+			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idEstructura, file.getFileVersion().getFileVersionId());
+			DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
+			fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
 			return formatterDos.parse(fecha);
 		}catch (Exception e) {
 			if(Validator.isNotNull(file.getModifiedDate())) {
@@ -218,80 +123,31 @@ public class BuscadorUtils {
 				return file.getCreateDate();
 			}
 		}
-
 	}
-	public String getFechaMetaDataTEST2(FileEntry file, ThemeDisplay td, String nombreCampo) throws PortalException {
+	
+	public String getFechaStringMetaData(long file, ThemeDisplay td, long idEstructura) throws PortalException {
 		String fecha = "";
-		//long idstructure=2221997;
-		long idstructure=49447;
 		try{
-			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idstructure, file.getFileVersion().getFileVersionId());
-
-
-			DDMFormValues ddmFormValues = StorageEngineManagerUtil
-					.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
+			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idEstructura, file);
+			DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
 			fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
 			return generarFecha(fecha);
 		}catch (Exception e) {
 			return "";
 		}
 	}
-	public String getStringMetaDataTEST(FileEntry file, ThemeDisplay td, String nombreCampo) throws PortalException {
-		String data = "";
-		//long idstructure=2851561;
-		long idstructure=1111111;
-		try{
-			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idstructure, file.getFileVersion().getFileVersionId());
-
-
-			DDMFormValues ddmFormValues = StorageEngineManagerUtil
-					.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
-			data=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
-			return data;
-		}catch (Exception e) {
-			if(Validator.isNotNull(file.getModifiedDate())) {
-				return "";
-			}else {
-				return "";
-			}
-		}
-	}
-	public String getFechaMetaData(FileEntry file, ThemeDisplay td, String nombreCampo) {
-		String fecha = "";
-		try {
-			long getEntryMetadatas = System.currentTimeMillis();
-			
-			List<DLFileEntryMetadata> dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil
-					.getFileVersionFileEntryMetadatas(file.getFileVersionId());
-			_log.info("tiempo tiempo getEntryMetadatas "+(System.currentTimeMillis()-getEntryMetadatas));
-			
-			for (DLFileEntryMetadata dlFileEntryMetadata2 : dlFileEntryMetadata) {
-				
-				long getDDMFormValues = System.currentTimeMillis();
-				DDMFormValues ddmFormValues = StorageEngineManagerUtil
-						.getDDMFormValues(dlFileEntryMetadata2.getDDMStorageId());
-				_log.info("tiempo tiempo getDDMFormValues "+(System.currentTimeMillis()-getDDMFormValues));
-				
-				List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
-				if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
-					for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
-						if (formfieldValue.getName().equalsIgnoreCase(nombreCampo)) {
-							data = formfieldValue.getValue().getString(td.getLocale());
-						}
-					}
-				}
-			}
-			_log.info("data "+data);
-			return data;
-		} catch (Exception e) {
-			if(Validator.isNotNull(file.getModifiedDate())) {
-				return "";
-			}else {
-				return "";
-			}
-		}
-	}
 	
+	public String getStringMetaData(long file, ThemeDisplay td, long idEstructura) throws PortalException {
+		try{
+			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idEstructura, file);
+
+			DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
+			return ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
+		}catch (Exception e) {
+			return "";
+		}
+	}
+		
 	public long getCategorias(HttpServletRequest httpReq, PortletPreferences prefs) {
 		String paramCategory = getCategoryURL(httpReq,prefs);
 		if(Validator.isNotNull(paramCategory)) {
@@ -405,14 +261,8 @@ public class BuscadorUtils {
 	
 	@Reference
 	private AssetCategoryLocalService _assetCategoryLocalServiceUtil;
-	
-	@Reference
-	private JournalArticleLocalService _journalArticleLocalService;
-	
+		
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
-	
-	@Reference
-	private QuerysUtils _querysUtils;
 
 }

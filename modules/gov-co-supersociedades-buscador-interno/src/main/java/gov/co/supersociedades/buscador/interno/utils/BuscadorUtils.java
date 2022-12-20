@@ -44,7 +44,7 @@ public class BuscadorUtils {
 			long entryClassPK = GetterUtil.getLong(doc);
 			long idStructureUrl=2851561;
 			long idStructurePublicacion=2221997;
-			long idStructureExpedicion=2851561;
+			long idStructureExpedicion=2695274;
 			
 			long idStructureDiario=4404273;
 			long idStructureDiarioLink=4404282;

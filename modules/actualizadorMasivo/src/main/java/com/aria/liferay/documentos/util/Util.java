@@ -10,6 +10,8 @@ import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServi
 import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMContent;
+import com.liferay.dynamic.data.mapping.service.DDMContentLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -69,6 +71,24 @@ public class Util {
 			_log.info(seri.toString());
 		}
 		_log.info("------");
+	}
+	
+	public void listaMetadata(String fileEntryId) {
+		
+		FileEntry file;
+		try {
+			file = DLAppServiceUtil.getFileEntry(Long.valueOf(fileEntryId));
+			List<DLFileEntryMetadata> ListFileEntryMeta = DLFileEntryMetadataLocalServiceUtil.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
+			for (DLFileEntryMetadata metadato : ListFileEntryMeta) {
+				Long storageid = metadato.getDDMStorageId();
+				DDMContent contenido = DDMContentLocalServiceUtil.getContent(storageid);
+				_log.info("Contenido metadata " +contenido.getData());
+				System.out.println("Contenido metadata " +contenido.getData());
+			}
+		} catch (NumberFormatException | PortalException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public User authentication() {

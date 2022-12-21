@@ -1,8 +1,6 @@
 package com.aria.liferay.documentos.util;
 
 import com.aria.liferay.documentos.model.Insolvencia;
-import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalServiceUtil;
-import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
@@ -12,16 +10,22 @@ import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
 import com.liferay.document.library.kernel.service.DLAppServiceUtil;
-import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.kernel.DDMForm;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.kernel.LocalizedValue;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.dynamic.data.mapping.kernel.Value;
 import com.liferay.dynamic.data.mapping.model.DDMContent;
+import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
 import com.liferay.dynamic.data.mapping.service.DDMContentLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactoryHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,6 +55,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 			"osgi.command.function=actualizarInsolvencia",
 			"osgi.command.function=actualizarCategorias",
+			"osgi.command.function=listaMetadata",
 			"osgi.command.scope=custom"
 	},
 	service = Object.class
@@ -59,6 +64,15 @@ public class ActualizarInsolvencia {
 	
 	//Long sitio = 20121L;
 
+	public void listaMetadata(String file) {
+		
+		Util util = new Util();
+		User user = util.authentication();
+		_log.info("FileEntry "+file);
+		
+		util.listaMetadata(file);
+	}
+	
 	public void actualizarInsolvencia(String companyId, String sitio) {
 		
 		Util util = new Util();
@@ -134,6 +148,13 @@ public class ActualizarInsolvencia {
 							Boolean FechaDePublicacion = Boolean.TRUE;
 							Boolean TituloExploradorMetadatoSEO = Boolean.TRUE;
 							
+							Boolean tramiteElim = Boolean.FALSE;
+							Boolean FechaExpedicionGlobalElim = Boolean.FALSE;
+							Boolean AnnoElim = Boolean.FALSE;
+							Boolean dependenciaOrigenElim = Boolean.FALSE;
+							Boolean FechaDePublicacionElim = Boolean.FALSE;
+							Boolean TituloExploradorMetadatoSEOElim = Boolean.FALSE;
+							
 							List<DLFileEntryMetadata> ListFileEntryMeta = DLFileEntryMetadataLocalServiceUtil.getFileVersionFileEntryMetadatas(file.getFileVersion().getFileVersionId());
 							for (DLFileEntryMetadata metadato : ListFileEntryMeta) {
 								Long storageid = metadato.getDDMStorageId();
@@ -142,10 +163,41 @@ public class ActualizarInsolvencia {
 								
 								DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(metadato.getDDMStorageId());
 								ddmFormValues.setDefaultLocale(LocaleUtil.SPAIN);
+								
+								
+								
 								List<DDMFormFieldValue> ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
 								
 								if (Validator.isNotNull(ddmFormFieldValues) && !ddmFormFieldValues.isEmpty()) {
 
+									List<DDMFormFieldValue> elementosEliminar = new ArrayList<DDMFormFieldValue>();
+									for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
+										if (formfieldValue.getName().equalsIgnoreCase("Tramite")) {
+											elementosEliminar.add(formfieldValue);
+											_log.info("Se eliminara Tramite");
+										}
+										if (formfieldValue.getName().equalsIgnoreCase("FechaExpedicionGlobal")) {
+											elementosEliminar.add(formfieldValue);
+											_log.info("Se eliminara FechaExpedicionGlobal");
+										}
+										if (formfieldValue.getName().equalsIgnoreCase("Anno")) {
+											elementosEliminar.add(formfieldValue);
+											_log.info("Se eliminara Anno");
+										}
+										if (formfieldValue.getName().equalsIgnoreCase("DependenciaOrigen")) {
+											elementosEliminar.add(formfieldValue);
+											_log.info("Se eliminara DependenciaOrigen");
+										}
+										if (formfieldValue.getName().equalsIgnoreCase("Fecha1g84")) {
+											elementosEliminar.add(formfieldValue);
+											_log.info("Se eliminara Fecha1g84");
+										}
+//										if (formfieldValue.getName().equalsIgnoreCase("TituloExploradorMetadatoSEO")) {
+//											elementosEliminar.add(formfieldValue);
+//											_log.info("Se eliminara TituloExploradorMetadatoSEO");
+//										}
+									}
+									ddmFormFieldValues.removeAll(elementosEliminar);
 									
 // 										int j=0;
 									for (DDMFormFieldValue formfieldValue : ddmFormFieldValues) {
@@ -214,72 +266,7 @@ public class ActualizarInsolvencia {
 										}
 									}
 									
-									if(FechaDePublicacion) {
-										DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
-										_log.info("creara el metadato FechaDePublicacion");
-										Value valor = new LocalizedValue(LocaleUtil.SPAIN);
-										String patternLiferay = "yyyy-MM-dd HH:mm";
-										String patternArchivo = "dd/MM/yyyy HH:mm";
-										SimpleDateFormat simpleDateFormatLiferay = new SimpleDateFormat(patternLiferay);
-										SimpleDateFormat simpleDateFormatArchivo = new SimpleDateFormat(patternArchivo);
-										Date date = simpleDateFormatArchivo.parse(registroMetadato.getFechaPublicacion());
-										_log.info("fecha parseada " +date);
-										valor.addString(LocaleUtil.SPAIN, simpleDateFormatLiferay.format(date));
-										nuevoFFV.setName("Fecha1g84");
-										nuevoFFV.setValue(valor);
-										ddmFormValues.addDDMFormFieldValue(nuevoFFV);
-									}
-									if(FechaExpedicionGlobal) {
-										DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
-										_log.info("creara el metadato FechaExpedicionGlobal");
-										Value valor = new LocalizedValue(LocaleUtil.SPAIN);
-										String patternLiferay = "yyyy-MM-dd";
-										String patternArchivo = "dd/MM/yyyy";
-										SimpleDateFormat simpleDateFormatLiferay = new SimpleDateFormat(patternLiferay);
-										SimpleDateFormat simpleDateFormatArchivo = new SimpleDateFormat(patternArchivo);
-										Date date = simpleDateFormatArchivo.parse(registroMetadato.getFechaExpedicion());
-										_log.info("fecha parseada " +date);
-										valor.addString(LocaleUtil.SPAIN, simpleDateFormatLiferay.format(date));
-										nuevoFFV.setName("FechaExpedicionGlobal");
-										nuevoFFV.setValue(valor);
-										ddmFormValues.addDDMFormFieldValue(nuevoFFV);
-									}
-									if(tramite) {
-										DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
-										_log.info("creara el metadato tramite");
-										Value valor = new LocalizedValue(LocaleUtil.SPAIN);
-										valor.addString(LocaleUtil.SPAIN, registroMetadato.getTramite());
-										nuevoFFV.setName("Tramite");
-										nuevoFFV.setValue(valor);
-										ddmFormValues.addDDMFormFieldValue(nuevoFFV);
-									}
-									if(Anno) {
-										DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
-										_log.info("creara el metadato Anno");
-										Value valor = new LocalizedValue(LocaleUtil.SPAIN);
-										valor.addString(LocaleUtil.SPAIN, registroMetadato.getAnioDocumento());
-										nuevoFFV.setName("Anno");
-										nuevoFFV.setValue(valor);
-										ddmFormValues.addDDMFormFieldValue(nuevoFFV);
-									}
-									if(dependenciaOrigen) {
-										DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
-										_log.info("creara el metadato dependenciaOrigen");
-										Value valor = new LocalizedValue(LocaleUtil.SPAIN);
-										valor.addString(LocaleUtil.SPAIN, registroMetadato.getDependenciaOrigen());
-										nuevoFFV.setName("DependenciaOrigen");
-										nuevoFFV.setValue(valor);
-										ddmFormValues.addDDMFormFieldValue(nuevoFFV);
-									}
-									if(TituloExploradorMetadatoSEO) {
-										DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
-										_log.info("creara el metadato TituloExploradorMetadatoSEO");
-										Value valor = new LocalizedValue(LocaleUtil.SPAIN);
-										valor.addString(LocaleUtil.SPAIN, registroMetadato.getTitulo());
-										nuevoFFV.setName("TituloExploradorMetadatoSEO");
-										nuevoFFV.setValue(valor);
-										ddmFormValues.addDDMFormFieldValue(nuevoFFV);
-									}
+
 									
 									StorageEngineManagerUtil.update(metadato.getDDMStorageId(), ddmFormValues, serviceContext);
 									
@@ -290,6 +277,166 @@ public class ActualizarInsolvencia {
 								
 							}
 							
+							//DLFileEntryMetadataLocalServiceUtil nuevoMetaLocal = new DLFileEntryMetadataLocalServiceUtil();
+							//DLFileEntryMetadata nuevoMeta = nuevoMetaLocal.createDLFileEntryMetadata(CounterLocalServiceUtil.increment());;
+							
+							
+							//nuevoMeta.set
+							long idStructurePublicacion=2221997;
+							long idStructureExpedicion=2695274;
+							long idStructureDependenciaTramite=4096222;
+							long idStructureAnno=60636;
+							
+							try {
+								if(FechaDePublicacion) {
+									DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
+									_log.info("creara el metadato FechaDePublicacion");
+									Value valor = new LocalizedValue(LocaleUtil.SPAIN);
+									String patternLiferay = "yyyy-MM-dd HH:mm";
+									String patternArchivo = "dd/MM/yyyy HH:mm";
+									SimpleDateFormat simpleDateFormatLiferay = new SimpleDateFormat(patternLiferay);
+									SimpleDateFormat simpleDateFormatArchivo = new SimpleDateFormat(patternArchivo);
+									Date date = simpleDateFormatArchivo.parse(registroMetadato.getFechaPublicacion());
+									_log.info("fecha parseada " +date);
+									valor.addString(LocaleUtil.SPAIN, simpleDateFormatLiferay.format(date));
+									nuevoFFV.setName("Fecha1g84");
+									nuevoFFV.setValue(valor);
+										
+									DDMForm ddmForm = new DDMForm();
+									ddmForm.setDefaultLocale(LocaleUtil.SPAIN);
+									DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+									ddmFormValues.setDefaultLocale(LocaleUtil.SPAIN);
+									ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+									long storage = new StorageEngineManagerUtil().create(companyId, idStructurePublicacion, ddmFormValues, serviceContext);
+									_log.info("Storage creado " +storage);
+									DLFileEntryMetadata dlmetadata = DLFileEntryMetadataLocalServiceUtil.createDLFileEntryMetadata(CounterLocalServiceUtil.increment());
+									dlmetadata.setCompanyId(companyId);
+									dlmetadata.setDDMStorageId(storage);
+									dlmetadata.setDDMStructureId(idStructurePublicacion);
+									dlmetadata.setFileEntryId(file.getFileEntryId());
+									dlmetadata.setFileVersionId(file.getFileVersion().getFileVersionId());
+									DLFileEntryMetadataLocalServiceUtil.addDLFileEntryMetadata(dlmetadata);
+									
+								}
+							}catch (Exception e) {
+								_log.error(e);
+							}
+							
+							try {
+								if(FechaExpedicionGlobal) {
+									DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
+									_log.info("creara el metadato FechaExpedicionGlobal");
+									Value valor = new LocalizedValue(LocaleUtil.SPAIN);
+									String patternLiferay = "yyyy-MM-dd";
+									String patternArchivo = "dd/MM/yyyy";
+									SimpleDateFormat simpleDateFormatLiferay = new SimpleDateFormat(patternLiferay);
+									SimpleDateFormat simpleDateFormatArchivo = new SimpleDateFormat(patternArchivo);
+									Date date = simpleDateFormatArchivo.parse(registroMetadato.getFechaExpedicion());
+									_log.info("fecha parseada " +date);
+									valor.addString(LocaleUtil.SPAIN, simpleDateFormatLiferay.format(date));
+									nuevoFFV.setName("FechaExpedicionGlobal");
+									nuevoFFV.setValue(valor);
+									
+									DDMForm ddmForm = new DDMForm();
+									ddmForm.setDefaultLocale(LocaleUtil.SPAIN);
+									DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+									ddmFormValues.setDefaultLocale(LocaleUtil.SPAIN);
+									ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+									long storage = new StorageEngineManagerUtil().create(companyId, idStructureExpedicion, ddmFormValues, serviceContext);
+									_log.info("Storage creado " +storage);
+									DLFileEntryMetadata dlmetadata = DLFileEntryMetadataLocalServiceUtil.createDLFileEntryMetadata(CounterLocalServiceUtil.increment());
+									dlmetadata.setCompanyId(companyId);
+									dlmetadata.setDDMStorageId(storage);
+									dlmetadata.setDDMStructureId(idStructureExpedicion);
+									dlmetadata.setFileEntryId(file.getFileEntryId());
+									dlmetadata.setFileVersionId(file.getFileVersion().getFileVersionId());
+									DLFileEntryMetadataLocalServiceUtil.addDLFileEntryMetadata(dlmetadata);
+								}
+							}catch (Exception e) {
+								_log.error(e);
+							}
+							
+							try {
+								if(tramite || dependenciaOrigen) {
+									DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
+									_log.info("creara el metadato tramite");
+									Value valor = new LocalizedValue(LocaleUtil.SPAIN);
+									valor.addString(LocaleUtil.SPAIN, registroMetadato.getTramite());
+									nuevoFFV.setName("Tramite");
+									nuevoFFV.setValue(valor);
+									
+									
+									DDMForm ddmForm = new DDMForm();
+									ddmForm.setDefaultLocale(LocaleUtil.SPAIN);
+									DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+									ddmFormValues.setDefaultLocale(LocaleUtil.SPAIN);
+									ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+									
+									nuevoFFV = new DDMFormFieldValue();
+									_log.info("creara el metadato dependenciaOrigen");
+									valor = new LocalizedValue(LocaleUtil.SPAIN);
+									valor.addString(LocaleUtil.SPAIN, registroMetadato.getDependenciaOrigen());
+									nuevoFFV.setName("DependenciaOrigen");
+									nuevoFFV.setValue(valor);
+									ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+									
+									long storage = new StorageEngineManagerUtil().create(companyId, idStructureDependenciaTramite, ddmFormValues, serviceContext);
+									_log.info("Storage creado " +storage);
+									DLFileEntryMetadata dlmetadata = DLFileEntryMetadataLocalServiceUtil.createDLFileEntryMetadata(CounterLocalServiceUtil.increment());
+									dlmetadata.setCompanyId(companyId);
+									dlmetadata.setDDMStorageId(storage);
+									dlmetadata.setDDMStructureId(idStructureDependenciaTramite);
+									dlmetadata.setFileEntryId(file.getFileEntryId());
+									dlmetadata.setFileVersionId(file.getFileVersion().getFileVersionId());
+									DLFileEntryMetadataLocalServiceUtil.addDLFileEntryMetadata(dlmetadata);
+								}
+								
+								
+							}catch (Exception e) {
+								_log.error(e);
+							}
+							
+							try {
+								if(Anno) {
+									DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
+									_log.info("creara el metadato Anno");
+									Value valor = new LocalizedValue(LocaleUtil.SPAIN);
+									valor.addString(LocaleUtil.SPAIN, registroMetadato.getAnioDocumento());
+									nuevoFFV.setName("Anno");
+									nuevoFFV.setValue(valor);
+									//ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+									
+									DDMForm ddmForm = new DDMForm();
+									ddmForm.setDefaultLocale(LocaleUtil.SPAIN);
+									DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+									ddmFormValues.setDefaultLocale(LocaleUtil.SPAIN);
+									ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+									long storage = new StorageEngineManagerUtil().create(companyId, idStructureAnno, ddmFormValues, serviceContext);
+									_log.info("Storage creado " +storage);
+									DLFileEntryMetadata dlmetadata = DLFileEntryMetadataLocalServiceUtil.createDLFileEntryMetadata(CounterLocalServiceUtil.increment());
+									dlmetadata.setCompanyId(companyId);
+									dlmetadata.setDDMStorageId(storage);
+									dlmetadata.setDDMStructureId(idStructureAnno);
+									dlmetadata.setFileEntryId(file.getFileEntryId());
+									dlmetadata.setFileVersionId(file.getFileVersion().getFileVersionId());
+									DLFileEntryMetadataLocalServiceUtil.addDLFileEntryMetadata(dlmetadata);
+								}
+							}catch (Exception e) {
+								_log.error(e);
+							}
+							
+							
+							
+//							if(TituloExploradorMetadatoSEO) {
+//								DDMFormFieldValue nuevoFFV = new DDMFormFieldValue();
+//								_log.info("creara el metadato TituloExploradorMetadatoSEO");
+//								Value valor = new LocalizedValue(LocaleUtil.SPAIN);
+//								valor.addString(LocaleUtil.SPAIN, registroMetadato.getTitulo());
+//								nuevoFFV.setName("TituloExploradorMetadatoSEO");
+//								nuevoFFV.setValue(valor);
+//								ddmFormValues.addDDMFormFieldValue(nuevoFFV);
+//							}
+//							
 						}catch (Exception e) {
 							_log.error(e);
 						}

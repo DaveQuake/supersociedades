@@ -1,1 +1,22 @@
 // Check GETTING_STARTED.markdown for information regarding usage.
+
+buildscript {
+        repositories {
+                mavenLocal()
+                jcenter()
+                maven {
+                        url "https://plugins.gradle.org/m2/"
+                }
+        }
+        dependencies {
+                classpath group: "org.sonarsource.scanner.gradle", name:"sonarqube-gradle-plugin", version:"2.7"
+        }
+}
+
+group = 'com.test.sonarqube.gradle'
+
+apply plugin: "org.sonarqube"
+
+
+
+

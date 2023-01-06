@@ -8,7 +8,6 @@ import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServi
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
-import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -70,18 +69,22 @@ public class BuscadorUtils {
 //			long timeFechaExp = System.currentTimeMillis();
 			Date fechaExpedicionCompare =getFechaMetaDataCompare(fileEntry, td, idStructureExpedicion);
 			if(Validator.isNull(fechaExpedicionCompare)) {
-				fechaExpedicionCompare = fileEntry.getModifiedDate();
+				fechaExpedicionCompare = fileEntry.getCreateDate();
+				_log.debug("Entro a asignar la fecha de creacion del documento por no tener fecha de expedicion, para el documento "+fileEntry.getFileEntryId()+" "+articulo.getTituloArticulo());
 			}
 //			_log.info("tiempo metadato fechaexp "+(System.currentTimeMillis()-timeFechaExp));
 
 			articulo.setDateCompare(fechaExpedicionCompare);
+			_log.debug("fecha compare sin formatterDos.format "+fechaExpedicionCompare+" "+fileEntry.getFileEntryId()+" "+articulo.getTituloArticulo());
+			_log.debug("fecha compare para enviar a generarFecha "+formatterDos.format(fechaExpedicionCompare)+" "+fileEntry.getFileEntryId()+" "+articulo.getTituloArticulo());
 			articulo.setFechaExtencion(generarFecha(formatterDos.format(fechaExpedicionCompare)));
 			
 //			long timeFechaPub = System.currentTimeMillis();
 			String fechaPublicacion =getFechaStringMetaData(fileVersionId, td, idStructurePublicacion);
 			if(Validator.isNull(fechaPublicacion)) {
-				if(Validator.isNotNull(fileEntry.getCreateDate())) {
-					fechaPublicacion = (formatter.format(fileEntry.getCreateDate()));
+				if(Validator.isNotNull(fileEntry.getModifiedDate())) {
+					fechaPublicacion = (formatter.format(fileEntry.getModifiedDate()));
+					//_log.debug("Entro a asignar la fecha de modificacion del documento por no tener fecha de publicacion, para el documento "+fileEntry.getFileEntryId()+" "+articulo.getTituloArticulo());
 				}
 			}
 //			_log.info("tiempo metadato fechaPub "+(System.currentTimeMillis()-timeFechaPub));
@@ -100,11 +103,11 @@ public class BuscadorUtils {
 			articulo.setSuinDescripcion(getStringMetaData(fileVersionId, td, idStructureSuin));
 			articulo.setSuinLink(getStringMetaData(fileVersionId, td, idStructureSuinLink));
 			
-			
+			//_log.debug("Objeto articulo para retornar al front "+articulo.toString());
 			
 			return articulo;
 		} catch (Exception e) {
-			_log.info(e);
+			_log.error(e);
 			return null;
 		}
 	}
@@ -115,12 +118,16 @@ public class BuscadorUtils {
 			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idEstructura, file.getFileVersion().getFileVersionId());
 			DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
 			fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
+			_log.debug("fecha leida del metadato sin parse "+fecha+" "+file.getFileEntryId()+" "+file.getTitle());
 			return formatterDos.parse(fecha);
 		}catch (Exception e) {
-			if(Validator.isNotNull(file.getModifiedDate())) {
-				return file.getModifiedDate();
-			}else {
+			if(Validator.isNotNull(file.getCreateDate())) {
+				_log.debug("Entro a asignar la fecha de creacion del documento por no tener fecha de expedicion, para el documento "+file.getFileEntryId()+" "+file.getTitle());
 				return file.getCreateDate();
+				
+			}else {
+				//_log.debug("Entro a asignar la fecha de modificacion del documento por no tener fecha de publicacion, para el documento "+file.getFileEntryId()+" "+file.getTitle());
+				return file.getModifiedDate();
 			}
 		}
 	}
@@ -131,6 +138,7 @@ public class BuscadorUtils {
 			DLFileEntryMetadata dlFileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(idEstructura, file);
 			DDMFormValues ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(dlFileEntryMetadata.getDDMStorageId());
 			fecha=ddmFormValues.getDDMFormFieldValues().get(0).getValue().getString(td.getLocale());
+			//_log.debug("fecha stringMetadata para enviar a generarFecha "+fecha+" "+file);
 			return generarFecha(fecha);
 		}catch (Exception e) {
 			return "";
@@ -167,7 +175,7 @@ public class BuscadorUtils {
 		try {
 			return _assetCategoryLocalServiceUtil.getCategory(categoryId);
 		} catch (Exception e) {
-			_log.debug(e);
+			_log.error(e);
 			return null;
 		}
 	}

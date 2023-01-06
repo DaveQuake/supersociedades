@@ -162,7 +162,7 @@ public class BuscadorHelper {
 							
 							long timegetInfoDocumento = System.currentTimeMillis();
 							ArticuloBusqueda articulo = _buscadorUtils.getInfoDocumento(td, idFileEntry);
-							_log.info("tiempo metadato getInfoDocumento "+(System.currentTimeMillis()- timegetInfoDocumento));
+							_log.debug("tiempo metadato getInfoDocumento "+(System.currentTimeMillis()- timegetInfoDocumento));
 							
 							
 							articulo.setCategoriaPadre(categoriaPadre.getName());
